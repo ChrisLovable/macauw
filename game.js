@@ -1,4 +1,4 @@
-(() => {
+﻿(() => {
   'use strict';
 
   const W=1600,H=900,roundDuration=60;
@@ -81,17 +81,18 @@
     }catch(_){hareAlpha=null;}
     draw();
   };
-  // V6: Two genuine eight-frame photographic wingbeat cycles, packed as transparent
-  // 4x2 WebP atlases. Each frame holds the bird at a stable position (no pulsing).
+  // Ducks and geese retain existing 8-frame wingbeat atlases.
+  // Rotsduif uses ALL original 20 GIF frames at native 60ms/frame, with transparent background.
   const WING_FRAME=360;
   const wingAtlases={
     EEND:{image:new Image(),frames:8,columns:4,fps:5.1},
     GANS:{image:new Image(),frames:8,columns:4,fps:3.25},
-    ROTSDUIF:{image:new Image(),frames:8,columns:4,fps:6.5}
+    // All 20 UNALTERED frames from the user's transparent GIF. 60 ms each.
+    ROTSDUIF:{image:new Image(),frames:20,columns:5,frameSize:281,frameDurationMs:30,fps:1000/30}
   };
   wingAtlases.EEND.image.src='/assets/bird-mallard-wingbeat.webp';
   wingAtlases.GANS.image.src='/assets/bird-goose-wingbeat.webp';
-  wingAtlases.ROTSDUIF.image.src='/assets/bird-rotsduif-wingbeat.webp';
+  wingAtlases.ROTSDUIF.image.src='/assets/bird-rotsduif-exact-20frames.png';
   for(const atlas of Object.values(wingAtlases)) atlas.image.onload=()=>draw();
 
 
@@ -115,12 +116,12 @@
   ].map(w=>({station:w[0],houses:w.slice(1)}));
   let waveIndex=0,olympicState='ready',olympicDone=0,olympicCurrentTarget=0;
   let releaseDelay=0,stationClock=30;
-  const arcadeLabels={skeet:'SKEET · DWARSVLUGTE',trap:'TRAP · WEGVLUGTE',olympic:'OLIMPIESE SKEET · ISSF 2026',waterfowl:'VOËLS & WATERVOËLS · ARCADE',hares:'HASE · OOP VELD',koedoe:'KOEDOE · KILSONE'};
+  const arcadeLabels={skeet:'SKEET Â· DWARSVLUGTE',trap:'TRAP Â· WEGVLUGTE',olympic:'OLIMPIESE SKEET Â· ISSF 2026',waterfowl:'VOÃ‹LS & WATERVOÃ‹LS Â· ARCADE',hares:'HASE Â· OOP VELD',koedoe:'KOEDOE Â· KILSONE'};
   const modeDescriptions={
-    skeet:'60 sekondes. Vyf al hoe moeiliker vlakke van dwarsvlieënde kleiduiwe.',
-    trap:'60 sekondes. Wegvlieënde kleiduiwe word vinniger en kleiner.',
+    skeet:'60 sekondes. Vyf al hoe moeiliker vlakke van dwarsvlieÃ«nde kleiduiwe.',
+    trap:'60 sekondes. WegvlieÃ«nde kleiduiwe word vinniger en kleiner.',
     olympic:'25 teikens op 8 stasies volgens die ISSF 2026-kwalifikasievolgorde. Een skoot per teiken; roep die teikens self.',
-    waterfowl:'60 sekondes. Bewegende eende, ganse en Afrika-rotsduiwe oor ’n dam. Vyf moeiliker vlakke.',
+    waterfowl:'60 sekondes. Bewegende eende, ganse en Afrika-rotsduiwe oor â€™n dam. Vyf moeiliker vlakke.',
     hares:'60 sekondes. Hardlopende hase in oop veld. Vinniger en verder hase tel meer punte. Vyf moeiliker vlakke.',
     koedoe:'60 sekondes. Jou oorspronklike 154-raam koedoevideo, met natuurlike galop. Net kilsone-skote tel. 100 kg of meer per koedoe; biltong verskyn vir 0,5 sekondes op die teiken se plek.'
   };
@@ -181,8 +182,8 @@
     const wave=currentWave();
     const station=wave?.station||8;
     $('stationLabel').textContent='STASIE '+station;
-    $('waveLabel').textContent=!wave?'RONDE KLAAR':(wave.houses.length===2?'DUBBEL':'ENKEL')+' · '+wave.houses.map(h=>h==='H'?'HOË':'LAE').join(' → ');
-    $('stationClock').textContent=stationClock.toFixed(0)+' s · ROEPVENSTER';
+    $('waveLabel').textContent=!wave?'RONDE KLAAR':(wave.houses.length===2?'DUBBEL':'ENKEL')+' Â· '+wave.houses.map(h=>h==='H'?'HOÃ‹':'LAE').join(' â†’ ');
+    $('stationClock').textContent=stationClock.toFixed(0)+' s Â· ROEPVENSTER';
     $('targetCount').textContent=olympicDone+' / 25';
     $('stationDots').innerHTML=Array.from({length:8},(_,i)=>'<span class="'+(station===i+1?'here':'')+'">'+(i+1)+'</span>').join('');
     const canCall=active&&!paused&&olympicState==='ready'&&!!wave;
@@ -196,18 +197,18 @@
     ui.score.textContent=formatScore(score);
     ui.scoreLabel.textContent=mode==='koedoe'?'KG BILTONG':'PUNTE';
     ui.hits.textContent=String(hits);
-    ui.accuracy.textContent=shots?Math.round(hits/shots*100)+'%':'—';
-    ui.ammo.textContent=reloading?'↻':'● '.repeat(ammo)+'○ '.repeat(Math.max(0,2-ammo));
+    ui.accuracy.textContent=shots?Math.round(hits/shots*100)+'%':'â€”';
+    ui.ammo.textContent=reloading?'â†»':'â— '.repeat(ammo)+'â—‹ '.repeat(Math.max(0,2-ammo));
     ui.level.textContent=String(olympic?(currentWave()?.station||8):level);
     $('levelMax').textContent=olympic?'':'/5';
     $('difficultyPrefix').setAttribute('aria-label',olympic?'Huidige stasie':'Moeilikheidsvlak');
-    ui.levelText.textContent=olympic?'ISSF · 25 TEIKENS':stageLabels[level-1];
+    ui.levelText.textContent=olympic?'ISSF Â· 25 TEIKENS':stageLabels[level-1];
     ui.bar.style.width=(olympic?(olympicDone/25*100):(elapsed/60*100)).toFixed(1)+'%';
     ui.badge.textContent=arcadeLabels[mode];
     $('olympicPanel').classList.toggle('hidden',!olympic||(!active&&!paused));
     $('callTarget').classList.toggle('hidden',!olympic||!active||paused||olympicState!=='ready');
     if(olympic)refreshOlympicPanel();
-    ui.pause.textContent=paused?'▶':'Ⅱ';ui.pause.setAttribute('aria-label',paused?'Hervat die ronde':'Onderbreek die ronde');
+    ui.pause.textContent=paused?'â–¶':'â…¡';ui.pause.setAttribute('aria-label',paused?'Hervat die ronde':'Onderbreek die ronde');
   }
 
   function selectMode(newMode){
@@ -222,7 +223,7 @@
     $('arena').classList.toggle('wetlands',mode==='waterfowl');
     ui.badge.textContent=arcadeLabels[mode];
     ui.desc.textContent=modeDescriptions[mode];
-    ui.btnStart.textContent=mode==='olympic'?'▶ BEGIN OLIMPIESE 25-TEIKEN-RONDE':'▶ BEGIN 60-SEKONDE-RONDE';
+    ui.btnStart.textContent=mode==='olympic'?'â–¶ BEGIN OLIMPIESE 25-TEIKEN-RONDE':'â–¶ BEGIN 60-SEKONDE-RONDE';
     setUi();draw();
   }
   document.querySelectorAll('[data-mode]').forEach(el=>el.addEventListener('click',()=>{selectMode(el.dataset.mode);sound(480,.07)}));
@@ -248,7 +249,7 @@
     hare=null;hareNext=1.4;harePasses=0;
     pointer={x:800,y:405};
     ui.intro.classList.add('hidden');ui.pause.disabled=false;
-    announce(mode==='olympic'?'STASIE 1 · ROEP DIE TEIKEN':'GEREED · VUUR!',1);
+    announce(mode==='olympic'?'STASIE 1 Â· ROEP DIE TEIKEN':'GEREED Â· VUUR!',1);
     last=performance.now();
     setUi();raf=requestAnimationFrame(loop);
   }
@@ -262,12 +263,12 @@
     const olympic=mode==='olympic', bird=mode==='waterfowl', hareMode=mode==='hares', kuduMode=mode==='koedoe';
     ui.title.innerHTML=olympic?'OLIMPIESE <em>RONDE KLAAR</em>':'RONDE <em>KLAAR</em>';
     const result=olympic?
-      '<b style="color:#ffcd75;font-size:1.6em">'+hits+' / 25 TREFFERS</b><br>'+escaped+' gemis · '+shots+' skote geneem · '+(shots?Math.round(hits/shots*100):0)+'% akkuraatheid':
+      '<b style="color:#ffcd75;font-size:1.6em">'+hits+' / 25 TREFFERS</b><br>'+escaped+' gemis Â· '+shots+' skote geneem Â· '+(shots?Math.round(hits/shots*100):0)+'% akkuraatheid':
       (kuduMode
-        ? '<b style="color:#ffcd75;font-size:1.6em">'+formatScore(score,'koedoe')+' KG BILTONG</b><br>'+hits+' koedoes in die kilsone getref · '+(shots?Math.round(hits/shots*100):0)+'% akkuraatheid · '+escaped+' gemis'
-        : '<b style="color:#ffcd75;font-size:1.6em">'+score.toLocaleString('af-ZA')+' PUNTE</b><br>'+hits+(bird?' voëls':hareMode?' hase':' kleiduiwe')+' getref · '+(shots?Math.round(hits/shots*100):0)+'% akkuraatheid · '+escaped+' gemis');
+        ? '<b style="color:#ffcd75;font-size:1.6em">'+formatScore(score,'koedoe')+' KG BILTONG</b><br>'+hits+' koedoes in die kilsone getref Â· '+(shots?Math.round(hits/shots*100):0)+'% akkuraatheid Â· '+escaped+' gemis'
+        : '<b style="color:#ffcd75;font-size:1.6em">'+score.toLocaleString('af-ZA')+' PUNTE</b><br>'+hits+(bird?' voÃ«ls':hareMode?' hase':' kleiduiwe')+' getref Â· '+(shots?Math.round(hits/shots*100):0)+'% akkuraatheid Â· '+escaped+' gemis');
     ui.desc.innerHTML=result+'<br>'+((score===best && score>0)?'<b style="color:#8ce78a">NUWE PERSOONLIKE REKORD!</b>':(kuduMode?'Beste: '+formatScore(best,'koedoe')+' kg':'Beste: '+best.toLocaleString('af-ZA')));
-    ui.btnStart.textContent=olympic?'↻ SPEEL WEER — 25 TEIKENS':'↻ SPEEL WEER — 60 SEKONDES';
+    ui.btnStart.textContent=olympic?'â†» SPEEL WEER â€” 25 TEIKENS':'â†» SPEEL WEER â€” 60 SEKONDES';
     ui.intro.classList.remove('hidden');
     $('callTarget').classList.add('hidden');
     setUi();
@@ -322,7 +323,7 @@
     const depthEnd=limit(depthStart+rand(-.20,.34),.62,1.36);
     clays.push({kind:'bird',species,x:left?-120:W+120,y:rand(235,535),vx:(left?1:-1)*speed,
       vy:rand(-11,11),g:0,maxAge:6.3,age:0,r,rot:0,vr:0,seed:rand(0,7),tilt:0,
-      wingHz:species==='GANS'?rand(2.7,3.5):species==='EEND'?rand(4.5,5.7):rand(6.0,7.6),
+      wingHz:species==='GANS'?rand(2.7,3.5):species==='EEND'?rand(4.5,5.7):1000/60,
       depthStart,depthEnd,depth:depthStart});
   }
 
@@ -493,7 +494,7 @@
     releaseDelay=rand(0,3);  // ISSF variable release after call.
     ammo=currentWave().houses.length;
     reloading=false;olympicCurrentTarget=0;
-    announce('TEIKEN GEROEP · GEREED',.9);
+    announce('TEIKEN GEROEP Â· GEREED',.9);
     setUi();
   }
   function releaseOlympicWave(){
@@ -510,8 +511,8 @@
         maxAge:2.55,age:0,r:48,rot:rand(-.2,.2),vr:fromHigh?2.1:-2.1,
         seed:rand(0,6),tilt:fromHigh?.13:-.13});
     });
-    announce(wave.houses.length===2?'DUBBEL · '+wave.houses.map(h=>h==='H'?'HOOG':'LAAG').join(' → '):
-      (wave.houses[0]==='H'?'HOË HUIS':'LAE HUIS'),1);
+    announce(wave.houses.length===2?'DUBBEL Â· '+wave.houses.map(h=>h==='H'?'HOOG':'LAAG').join(' â†’ '):
+      (wave.houses[0]==='H'?'HOÃ‹ HUIS':'LAE HUIS'),1);
     setUi();
   }
   function finishOlympicWave(){
@@ -564,7 +565,7 @@
       }
       if(!currentWave()){score=hits;endGame();return;}
       stationClock=30;olympicState='ready';ammo=currentWave().houses.length;
-      announce('STASIETYD VERSTREKE · '+skips+' REEKS(E) GEMIS',1.5);
+      announce('STASIETYD VERSTREKE Â· '+skips+' REEKS(E) GEMIS',1.5);
     }
     if(olympicState==='delay'){
       releaseDelay-=dt;
@@ -670,10 +671,10 @@
       else if(c.kind==='kuduTarget'){showBiltongBurst(c);}
       else explode(c);
       const msg=(c.kind==='hareTarget')
-        ? ('TREFFER! '+c.distanceLabel+' · '+c.speedLabel+' · +'+points)
+        ? ('TREFFER! '+c.distanceLabel+' Â· '+c.speedLabel+' Â· +'+points)
         : (c.kind==='kuduTarget'
-            ? ('BILTONG!! '+c.distanceLabel+' · '+c.speedLabel+' · +'+formatScore(points,'koedoe')+' KG')
-            : (streak%5===0?'🔥 REEKS ×'+(Math.floor((streak-1)/5)+1)+' · +'+points:'+'+points));
+            ? ('BILTONG!! '+c.distanceLabel+' Â· '+c.speedLabel+' Â· +'+formatScore(points,'koedoe')+' KG')
+            : (streak%5===0?'ðŸ”¥ REEKS Ã—'+(Math.floor((streak-1)/5)+1)+' Â· +'+points:'+'+points));
       if(c.kind!=='kuduTarget')announce(msg,.75);
       sound(870,.12,'triangle',.04,.035);
     }else{streak=0;announce(bodyOnly&&mode==='koedoe'?'NET KILSONE TEL!':'MIS!',bodyOnly&&mode==='koedoe'?.55:.23);}
@@ -687,7 +688,7 @@
     time=Math.max(0,roundDuration-elapsed);
     const newLevel=limit(Math.floor(elapsed/12)+1,1,5);
     if(level!==newLevel){
-      level=newLevel;announce('VLAK '+level+' · '+stageLabels[level-1],1.05);
+      level=newLevel;announce('VLAK '+level+' Â· '+stageLabels[level-1],1.05);
       sound(570,.13,'triangle',.06);
     }
     if(reloading){reloadTimer-=dt;if(reloadTimer<=0){reloading=false;ammo=2;sound(485,.05,'square',.026);}}
@@ -757,19 +758,24 @@
 
 
   // Three animated species only: mallard, Egyptian goose, African rock pigeon.
-  // Never bank, roll, tilt or bob the bird's body; only its wings change frames.
+  // No added rotation or artificial bobbing: preserve original wing movement.
   function drawBird(c){
     const atlas=wingAtlases[c.species];
     if(!atlas || !atlas.image.complete || !atlas.image.naturalWidth)return;
     const depth=c.depth||1;
     const width=c.r*(c.species==='GANS'?4.45:c.species==='EEND'?4.75:4.1)*depth;
-    const frame=Math.floor(((c.age*(c.wingHz||atlas.fps)+c.seed/7)%1)*atlas.frames);
-    const sx=(frame%atlas.columns)*WING_FRAME;
-    const sy=Math.floor(frame/atlas.columns)*WING_FRAME;
+    // ROTSDUIF plays every source frame once in order, at its native 60 ms/frame.
+    // The other species retain their previous wingbeat animation unchanged.
+    const frame=c.species==='ROTSDUIF'
+      ? Math.floor((c.age*1000/atlas.frameDurationMs+Math.floor(c.seed))%atlas.frames)
+      : Math.floor(((c.age*(c.wingHz||atlas.fps)+c.seed/7)%1)*atlas.frames);
+    const frameSize=atlas.frameSize||WING_FRAME;
+    const sx=(frame%atlas.columns)*frameSize;
+    const sy=Math.floor(frame/atlas.columns)*frameSize;
     ctx.save();
     ctx.translate(c.x,c.y);
     ctx.scale(c.vx>=0?1:-1,1);
-    ctx.drawImage(atlas.image,sx,sy,WING_FRAME,WING_FRAME,-width*.5,-width*.5,width,width);
+    ctx.drawImage(atlas.image,sx,sy,frameSize,frameSize,-width*.5,-width*.5,width,width);
     ctx.restore();
   }
 
@@ -916,17 +922,17 @@
   const vibeButton=$('vibrate');
   if(vibeButton){
     const supported=typeof navigator.vibrate==='function';
-    vibeButton.textContent=supported?'▤ VIBRASIE AAN':'▤ GEEN VIBRASIE';
+    vibeButton.textContent=supported?'â–¤ VIBRASIE AAN':'â–¤ GEEN VIBRASIE';
     vibeButton.disabled=!supported;
     vibeButton.addEventListener('click',()=>{
       vibrationEnabled=!vibrationEnabled;
-      vibeButton.textContent=vibrationEnabled?'▤ VIBRASIE AAN':'▤ VIBRASIE AF';
+      vibeButton.textContent=vibrationEnabled?'â–¤ VIBRASIE AAN':'â–¤ VIBRASIE AF';
       if(vibrationEnabled)try{navigator.vibrate(40);}catch(_){}
     });
   }
   $('sound').addEventListener('click',()=>{
     audioEnabled=!audioEnabled;
-    $('sound').textContent=audioEnabled?'♪ AAN':'♪ AF';
+    $('sound').textContent=audioEnabled?'â™ª AAN':'â™ª AF';
     if(audioEnabled)sound(440,.09);
   });
   $('full').addEventListener('click',async()=>{
@@ -978,3 +984,4 @@
     getVeldImage:()=>({loaded:veldBg.complete&&veldBg.naturalWidth>0,width:veldBg.naturalWidth,height:veldBg.naturalHeight}),
     getAtlasStatus:()=>Object.fromEntries(Object.entries(wingAtlases).map(([name,a])=>[name,{loaded:a.image.complete&&a.image.naturalWidth>0,frames:a.frames,width:a.image.naturalWidth,height:a.image.naturalHeight}]))};
 })();
+
