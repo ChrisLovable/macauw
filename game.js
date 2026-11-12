@@ -88,7 +88,7 @@
     EEND:{image:new Image(),frames:8,columns:4,fps:5.1},
     GANS:{image:new Image(),frames:8,columns:4,fps:3.25},
     // All 20 UNALTERED frames from the user's transparent GIF. 60 ms each.
-    ROTSDUIF:{image:new Image(),frames:20,columns:5,frameSize:281,frameDurationMs:30,fps:1000/30}
+    ROTSDUIF:{image:new Image(),frames:20,columns:5,frameSize:281,frameDurationMs:15,fps:1000/15}
   };
   wingAtlases.EEND.image.src='/assets/bird-mallard-wingbeat.webp';
   wingAtlases.GANS.image.src='/assets/bird-goose-wingbeat.webp';
