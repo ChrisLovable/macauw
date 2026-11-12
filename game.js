@@ -23,7 +23,7 @@
   const kuduVideo=document.createElement('video');
   kuduVideo.src='/assets/kudu-original-source.mp4';
   kuduVideo.preload='auto';kuduVideo.muted=true;kuduVideo.defaultMuted=true;
-  kuduVideo.playsInline=true;kuduVideo.loop=true;kuduVideo.playbackRate=1;
+  kuduVideo.playsInline=true;kuduVideo.loop=true;kuduVideo.playbackRate=2;
   kuduVideo.setAttribute('playsinline','');
   kuduVideo.setAttribute('webkit-playsinline','');
   // Display is hidden only; the browser still decodes the unmodified source.
@@ -417,9 +417,9 @@
   const KUDU_FRAMES=154; // original MP4, decoded at native 30fps
   const KUDU_DEPTHS=[
     // These are intentionally much smaller and farther into the field.
-    {name:'NABY',scale:.56,groundY:752,move:1.00,points:1.00},
-    {name:'MIDDEL',scale:.40,groundY:673,move:.80,points:1.30},
-    {name:'VER',scale:.28,groundY:618,move:.62,points:1.65}
+    {name:'NABY',scale:1.26,groundY:690,move:1.00,points:1.00},
+    {name:'MIDDEL',scale:0.9,groundY:610,move:.80,points:1.30},
+    {name:'VER',scale:0.63,groundY:530,move:.62,points:1.65}
   ];
   const KUDU_SPEEDS=[
     {name:'MATIG',move:1.00,points:1.00,runFps:5.8,lead:.105},
