@@ -65,12 +65,33 @@
       card.append(submit);
     }
     card.append(status);
-    const row=el('div','display:flex;gap:8px;flex-wrap:wrap;margin:10px 0');
-    const select=el('select','flex:1;min-width:150px;padding:9px;border-radius:9px;border:1px solid #7395aa;background:#20455d;color:white;');
-    for(const [value,label] of Object.entries(modes)){const opt=document.createElement('option');opt.value=value;opt.textContent=label;select.append(opt);}
-    select.value=result.mode;const refresh=button('WYS TOP 20');
-    refresh.addEventListener('click',()=>loadBoard(card,status,select.value));
-    select.addEventListener('change',()=>loadBoard(card,status,select.value));row.append(select,refresh);card.append(row);
+    /* macauw-leaderboard-tabs-v1: all six disciplines visible; no native dropdown */
+    const row=el('div','display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:9px 0 10px;');
+    row.id='macauwLbModes';
+    let selectedMode=result.mode;
+    const modeButtons=[];
+    const modeLabels={skeet:'SKEET',trap:'TRAP',olympic:'OLIMPIESE SKEET',waterfowl:'VOÃ‹LS & WATERVOÃ‹LS',hares:'HASE',koedoe:'KOEDOE'};
+    const selectModeButton=(value)=>{
+      selectedMode=value;
+      for(const b of modeButtons){
+        const on=b.dataset.lbMode===value;
+        b.setAttribute('aria-pressed',String(on));
+        b.style.background=on?'linear-gradient(135deg,#9b6221,#53401f)':'linear-gradient(135deg,#20465e,#112b3c)';
+        b.style.borderColor=on?'#ffd17d':'#63889e';
+        b.style.boxShadow=on?'inset 0 0 0 1px #ffe2a666,0 0 11px #dfa94733':'inset 0 1px 0 #ffffff18';
+        b.style.color='#fff';
+      }
+      loadBoard(card,status,value);
+    };
+    for(const [value,label] of Object.entries(modeLabels)){
+      const b=button(label,'min-width:0;width:100%;min-height:42px;padding:7px 4px;border:1px solid #63889e;border-radius:10px;background:linear-gradient(135deg,#20465e,#112b3c);color:#fff;font-size:clamp(10px,1.5vw,13px);line-height:1.15;font-weight:850;white-space:normal;text-align:center;cursor:pointer;box-sizing:border-box;');
+      b.dataset.lbMode=value;
+      b.addEventListener('click',()=>selectModeButton(value));
+      row.append(b);modeButtons.push(b);
+    }
+    card.append(row);
+    // Initial mode highlight without issuing a duplicate network request.
+    for(const b of modeButtons){const on=b.dataset.lbMode===selectedMode;b.setAttribute('aria-pressed',String(on));if(on){b.style.background='linear-gradient(135deg,#9b6221,#53401f)';b.style.borderColor='#ffd17d';b.style.boxShadow='inset 0 0 0 1px #ffe2a666,0 0 11px #dfa94733';}}
     const table=el('div','width:100%;max-height:36vh;overflow:auto');table.id='macauwLbRows';card.append(table);
     backdrop.append(card);document.getElementById('arena').append(backdrop);
     if(kind==='view')loadBoard(card,status,result.mode);

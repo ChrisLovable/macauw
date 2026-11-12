@@ -528,6 +528,7 @@
   // One complete 25-target ISSF qualification sequence; each wave must be called.
   function callOlympic(){
     if(!active||paused||mode!=='olympic'||olympicState!=='ready'||!currentWave())return;
+    if(audioEnabled){olympicPull.pause();olympicPull.currentTime=0;olympicPull.play().catch(e=>console.warn("Olympic PULL audio:",e));}
     olympicState='delay';
     releaseDelay=rand(0,3);  // ISSF variable release after call.
     ammo=currentWave().houses.length;
@@ -956,7 +957,7 @@
   });
   canvas.addEventListener('contextmenu',e=>e.preventDefault());
 
-  $('callTarget').addEventListener('click',callOlympic); const olympicPull=new Audio("/assets/olympic-pull.mp3");olympicPull.preload="auto";olympicPull.volume=1; /* macauw-olympic-pull-v59 */ $('callTarget').addEventListener('click',()=>{if(mode==="olympic"&&active&&!paused&&olympicState==="delay"&&audioEnabled){olympicPull.pause();olympicPull.currentTime=0;olympicPull.play().catch(()=>{});}});
+  $('callTarget').addEventListener('click',callOlympic); const olympicPull=new Audio("/assets/olympic-pull.mp3");olympicPull.preload="auto";olympicPull.volume=1; /* macauw-olympic-pull-v59: audio handled inside callOlympic */
   ui.btnStart.addEventListener('click',startGame);
   ui.pause.addEventListener('click',pauseGame);
   // macauw-stop-game-v1: Return to the existing main menu.
