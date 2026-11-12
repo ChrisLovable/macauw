@@ -530,7 +530,7 @@
   // One complete 25-target ISSF qualification sequence; each wave must be called.
   function callOlympic(){
     if(!active||paused||mode!=='olympic'||olympicState!=='ready'||!currentWave())return;
-    if(audioEnabled){olympicPull.pause();olympicPull.currentTime=0;olympicPull.play().catch(e=>console.warn("Olympic PULL audio:",e));}
+    olympicPull.pause();olympicPull.currentTime=0;olympicPull.play().catch(e=>console.warn("Olympic PULL audio:",e));
     olympicState='delay';
     releaseDelay=rand(0,3);  // ISSF variable release after call.
     ammo=currentWave().houses.length;
