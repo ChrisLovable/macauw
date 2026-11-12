@@ -372,7 +372,7 @@
     const sp=HARE_SPEEDS[speedIndex],dist=HARE_DEPTHS[distanceIndex];
     // 2x horizontal speed AND 2x stride rate; 2x sprite dimensions and hit area.
     const runSpeed=2*(205+18*n)*sp.move*dist.move;
-    const points=[500,400,300,200,100][distanceIndex]; // Higher speed = higher score.
+    const points=[100,200,300,400,500][distanceIndex]; // Higher speed = higher score.
     const scale=2*dist.scale*rand(.96,1.04);
     const padding=185*scale;
     // Place one hare in each lane immediately when a Hare round begins.
