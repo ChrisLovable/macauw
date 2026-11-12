@@ -70,7 +70,7 @@
     row.id='macauwLbModes';
     let selectedMode=result.mode;
     const modeButtons=[];
-    const modeLabels={skeet:'SKEET',trap:'TRAP',olympic:'OLIMPIESE SKEET',waterfowl:'VOÃ‹LS & WATERVOÃ‹LS',hares:'HASE',koedoe:'KOEDOE'};
+    const modeLabels={skeet:'SKEET',trap:'TRAP',olympic:'OLIMPIESE SKEET',waterfowl:'VO\u00CBLS & WATERVO\u00CBLS',hares:'HASE',koedoe:'KOEDOE'};
     const selectModeButton=(value)=>{
       selectedMode=value;
       for(const b of modeButtons){
