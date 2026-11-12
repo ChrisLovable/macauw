@@ -130,7 +130,7 @@
   const stageLabels=['OPWARMING','MEER SPOED','DUBBELTEIKENS','VINNIGE VLUGTE','EINDSPRINT'];
   const seen=new Set();
   function loadBest(){try{return Number(localStorage.getItem('macauw-eclay-best-'+mode)||((mode==='skeet')?localStorage.getItem('macauw-eclay-best'):0)||0)||0}catch(_){return 0}}
-  best=loadBest();
+  best=mode==='waterfowl'?Math.round(loadBest()/10)*10:loadBest();
 
   const ui={
     timer:$('timer'),score:$('score'),scoreLabel:$('scoreLabel'),hits:$('hits'),accuracy:$('accuracy'),shots:$('shots'),
@@ -217,7 +217,7 @@
     if(active)return;
     mode=newMode;
     if(mode!=='koedoe'){kuduVideo.pause();kuduAmbience.pause();}
-    best=loadBest();
+    best=mode==='waterfowl'?Math.round(loadBest()/10)*10:loadBest();
     document.querySelectorAll('[data-mode]').forEach(el=>{
       el.classList.toggle('active',el.dataset.mode===mode);
       el.setAttribute('aria-pressed',String(el.dataset.mode===mode));
@@ -264,7 +264,7 @@
     if(ended)return;
     active=false;ended=true;ui.pause.disabled=true;birdAmbience.pause();clayTrapAudio.pause();
     if(mode==='koedoe'){kuduVideo.pause();kuduAmbience.pause();}
-    if(score>best){best=score;try{localStorage.setItem('macauw-eclay-best-'+mode,String(best));}catch(_){}}
+    if(mode==='waterfowl')score=Math.round(score/10)*10; if(score>best){best=score;try{localStorage.setItem('macauw-eclay-best-'+mode,String(best));}catch(_){}}
     sound(630,.14,'triangle',.07);sound(900,.2,'triangle',.06,.14);
     const olympic=mode==='olympic', bird=mode==='waterfowl', hareMode=mode==='hares', kuduMode=mode==='koedoe';
     ui.title.innerHTML=olympic?'OLIMPIESE <em>RONDE KLAAR</em>':'RONDE <em>KLAAR</em>';
