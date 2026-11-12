@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="af-ZA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#071420">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="description" content="Speel die Macauw E-Kleiduiwe-uitdaging: Skeet, Trap, Olimpiese Skeet, Voëls & Watervoëls, Hase en Koedoe op selfoon, rekenaar of TV.">
+<meta property="og:title" content="Macauw E-Kleiduiwe-uitdaging · Ses spelmodusse">
+<meta property="og:description" content="Speel Skeet, Trap, Olimpiese Skeet, Watervoëls, Hase of Koedoe.">
+<meta property="og:image" content="/assets/icon-512.png">
+<link rel="icon" type="image/png" href="/assets/icon-192.png">
+<link rel="apple-touch-icon" href="/assets/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/macauw-modern.css">
+<link rel="stylesheet" href="/macauw-premium-v2.css">
+<title>Macauw E-Kleiduiwe-uitdaging · V18 Koedoe · 154 rame</title>
+<link rel="stylesheet" href="/olympic-education.css">
+<link rel="stylesheet" href="/macauw-mobile-compact.css">
+<link rel="stylesheet" href="/macauw-results-fit.css">
+</head>
+<body>
+<main class="arena" id="arena">
+  <canvas id="field" width="1600" height="900" aria-label="Kleiduiweskiet-speelveld"></canvas>
+  <header class="scoreboard">
+    <div class="brands">
+      <img class="club" src="/assets/macauw-club.png" alt="Macauw Kleiduifskietklub se logo">
+      <div class="brand-title"><b>MACAUW</b><small>E-KLEIDUIFUITDAGING</small></div>
+      <span class="brand-divider"></span>
+      <div class="beretta-lockup"><img src="/assets/beretta-emblem.png" alt="Beretta-embleem"><b>BERETTA</b></div>
+    </div>
+    <div class="scores">
+      <div class="metric timer-metric"><small id="timerLabel">TYD OOR</small><strong id="timer">60.0</strong></div>
+      <div class="metric"><small id="scoreLabel">PUNTE</small><strong id="score">0</strong></div>
+      <div class="metric minor"><small>TREFFERS</small><strong id="hits">0</strong></div>
+      <div class="metric minor"><small>AKKURAATHEID</small><strong id="accuracy">—</strong></div>
+      <div class="metric minor"><small>SKOTE</small><strong id="shots">0</strong></div>
+    </div>
+    <button class="icon-button pause-button" id="pause" aria-label="Onderbreek die rondte" disabled>Ⅱ</button>
+  </header>
+  <div class="difficulty" aria-label="Moeilikheidsgraad"><span id="difficultyPrefix">VLAK <b id="level">1</b><span id="levelMax">/5</span></span><div class="track"><div id="difficultyFill" class="track-fill"></div></div><span id="levelText">OPWARMING</span></div>
+  <div class="toast" id="toast" aria-live="polite"></div>
+  <div class="stage-label" id="modeBadge">SKEET · DWARSVLUGTE</div>
+  <div id="olympicPanel" class="olympic-panel hidden" aria-live="polite">
+    <div class="olympic-eyebrow">OLIMPIESE SKEET · KWALIFIKASIERONDTE</div>
+    <div class="olympic-details"><strong id="stationLabel">STASIE 1</strong><span id="waveLabel">HOË HUIS · ENKEL</span></div>
+    <div class="olympic-bottom"><span id="stationClock">30 s</span><span id="targetCount">0 / 25</span></div>
+    <div class="olympic-stations" id="stationDots" aria-label="Skietstasies"></div>
+  </div>
+  <button id="callTarget" class="call-target hidden" type="button" aria-label="Roep die volgende Olimpiese teiken">📣 ROEP TEIKEN</button>
+  <div class="overlay" id="intro">
+    <section class="welcome-card" role="dialog" aria-labelledby="heading" aria-modal="true">
+      <div class="welcome-heading"><div class="eyebrow">MACAUW KLEIDUIFSKIETKLUB <span>×</span> BERETTA</div><h1 id="heading">E-KLEIDUIF<br><em>UITDAGING</em></h1><p id="description">Ses spelmodusse met Skeet, Trap, Olimpiese Skeet, Voëls & Watervoëls en ’n aparte Hase-dissipline in oop veld.</p></div>
+      <div class="welcome-settings"><div class="mode-heading">KIES JOU DISSIPLINE</div><div class="mode-select">
+          <button class="mode active" data-mode="skeet"><b>SKEET</b></button>
+          <button class="mode" data-mode="trap"><b>TRAP</b></button>
+          <button class="mode olympic-mode" data-mode="olympic"><b>OLIMPIESE SKEET</b></button>
+          <button class="mode" data-mode="waterfowl"><b>VOËLS &amp; WATERVOËLS</b></button>
+          <button class="mode" data-mode="hares"><b>HASE</b></button>
+          <button class="mode" data-mode="koedoe"><b>KOEDOE</b></button>
+        </div><button id="start" class="start">▶ &nbsp; BEGIN 60-SEKONDE-RONDTE</button><div class="tips">Tik op ’n teiken om te skiet · Outomatiese herlaai · Android-vibrasie</div><button class="link-button" id="howto" type="button">Hoe om te speel</button></div>
+      <p class="disclaimer">Onafhanklike speletjie-konsep. Logo’s is slegs ter demonstrasie; geen amptelike borgskap of goedkeuring word geïmpliseer nie.</p>
+    </section>
+  </div>
+  <div class="orient" id="portraitGate" aria-live="polite"><div class="phone-turn">▯ <span>↻</span></div><h2>Draai jou foon dwars</h2><p>Die speletjie werk die beste in landskapmodus. Skakel Outo-draai aan as die skerm nie draai nie.</p><button id="tryLandscape">PROBEER VOLSKERM-LANDSKAP</button></div>
+  <div class="howto hidden" id="howtoDialog"><div class="howto-card"><h2>Hoe om te speel</h2><p><b>Skeet/Trap:</b> Skiet soveel moontlik kleiduiwe in 60 sekondes. Die teikens raak elke 12 sekondes moeiliker. Mik voor die kleiduif. Hoe vinniger dit vlieg, hoe verder voor die teiken moet jy mik om dit te tref.</p><p><b>Olimpiese Skeet:</b> ’n Ronde bestaan uit 25 teikens op agt stasies. Roep die teiken met die knoppie; dit verskyn ná ’n wisselende vertraging van 0 tot 3 sekondes. Skiet een keer per teiken in die aangeduide volgorde, ook by dubbels. Stasie 4 word weer besoek voordat stasie 8 volg.</p><p><b>Voëls en watervoëls:</b> ’n Arcade-spel met bewegende eende, ganse en Afrika-rotsduiwe oor ’n dam. Alle voëls vlieg reguit en hou hul lywe gelyk; net hul vlerke klap. Dit is geen amptelike ISSF-dissipline nie.</p><p><b>Hase:</b> ’n Aparte 60-sekonde-dissipline op kort groen gras met bome weerskante en ’n vaste agtergrond. Hase hardloop teen verskillende snelhede en op verskillende afstande. Vinniger en verder hase gee meer punte.</p><p><b>Raakskerm:</b> Tik direk op ’n teiken om te skiet. Ná twee skote laai die speletjie vanself. Op ondersteunde Android-fone vibreer die foon kortliks wanneer jy skiet.</p><p><b>TV/rekenaar:</b> Beweeg die muis of lugmuis en klik om te skiet. Die spasiebalk skiet en P onderbreek. Herlaai gebeur outomaties.</p><p><b>Moeilikheid:</b> Die 60-sekonde-uitdagings het vyf toenemende vlakke. Olimpiese Skeet volg eerder die vaste ISSF-volgorde.</p><button id="closeHowto">VERSTAAN</button></div></div>
+  <div class="utility"><button id="vibrate" aria-label="Skakel Android-vibrasie aan of af">▤ VIBRASIE AAN</button><button id="sound" aria-label="Skakel klank aan of af">♪ AAN</button><button id="full" aria-label="Volskerm">⛶ VOLSKERM</button></div>
+</main>
+<script src="/macauw-menu-actions.js" defer></script>
+<script src="/game.js" defer></script>
+<script src="/leaderboard-config.js" defer></script>
+<script src="/leaderboard.js" defer></script>
+<script src="/macauw-language.js" defer></script>
+<script src="/macauw-modern.js" defer></script>
+<script src="/olympic-education.js" defer></script>
+</body>
+</html>

@@ -443,7 +443,7 @@
     const distanceIndex=weightedPick([.28,.43,.29]);
     const speedIndex=weightedPick([Math.max(.22,.46-n*.05),.33,.21+n*.05]);
     const sp=KUDU_SPEEDS[speedIndex],dist=KUDU_DEPTHS[distanceIndex];
-    const runSpeed=(214+20*n)*sp.move*dist.move;
+    const runSpeed=(214+20*n)*sp.move*dist.move*1.5;
     const kg=Math.round((100*sp.points*dist.points)/10)*10;
     const scale=dist.scale*rand(.97,1.03);
     const padding=260*scale;

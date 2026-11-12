@@ -38,3 +38,6 @@
 @media(max-width:700px) and (orientation:landscape){.brand-title small{display:none}.beretta-lockup b{font-size:11px}.metric.minor{display:none}.mode small{font-size:8px}}
 
 /* macauw-centered-vlak-v60 */ .difficulty{left:50%!important;right:auto!important;transform:translateX(-50%)!important;top:clamp(65px,8.2vw,88px);font-size:clamp(12px,1.5vw,18px)!important;padding:9px 17px!important;gap:12px!important;min-width:340px!important;justify-content:center!important}.difficulty .track{height:9px!important;width:clamp(80px,13vw,200px)!important}
+
+/* macauw-vlak-bottom-v61 */
+@media (orientation:landscape) and (max-height:650px){#arena .difficulty{position:absolute!important;top:auto!important;bottom:8px!important;left:50%!important;right:auto!important;transform:translateX(-50%)!important;min-width:0!important;width:auto!important;padding:5px 12px!important;gap:8px!important;font-size:11px!important;z-index:3!important}#arena .difficulty .track{width:75px!important;height:5px!important}#arena .stage-label{left:8px!important;right:auto!important;transform:none!important;bottom:8px!important}}
