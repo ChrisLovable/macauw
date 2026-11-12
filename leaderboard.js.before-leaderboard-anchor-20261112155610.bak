@@ -1,0 +1,110 @@
+/* Macauw V58 leaderboard addon. Reads the final result; does not alter game mechanics. */
+(() => {
+  'use strict';
+  const cfg = window.MACAUW_SUPABASE || {};
+  const ready = /^https:\/\/[^/]+\.supabase\.co\/?$/.test(cfg.url || '') &&
+    typeof cfg.publishableKey === 'string' && cfg.publishableKey.length > 20 &&
+    !cfg.publishableKey.includes('PASTE_');
+  const api = ready ? cfg.url.replace(/\/$/, '') : '';
+  const modes = {skeet:'SKEET',trap:'TRAP',olympic:'OLIMPIESE SKEET',waterfowl:'VOËLS & WATERVOËLS',hares:'HASE',koedoe:'KOEDOE'};
+  const styles = 'font-family:system-ui,sans-serif;color:#fff;box-sizing:border-box';
+  const actionStyle = 'padding:13px 12px;border-radius:10px;border:1px solid #72b9e7;background:#0b6694;color:#fff;font-size:clamp(13px,2vw,17px);font-weight:850;cursor:pointer';
+
+  function button(label, style=actionStyle) { const b=document.createElement('button');b.type='button';b.textContent=label;b.style.cssText=style;return b; }
+  function el(tag, css='', text) {const n=document.createElement(tag);n.style.cssText=css;if(text!==undefined)n.textContent=text;return n;}
+  function configError(){ return 'Supabase is not configured yet. Run the supplied SQL and install your project URL and publishable key.'; }
+  function uuid(){if(window.crypto?.randomUUID)return crypto.randomUUID();return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.floor(Math.random()*16);return (c==='x'?r:(r&3|8)).toString(16);});}
+  function getToken(){const k='macauw-player-token-v1';try {let v=localStorage.getItem(k);if(!v){v=uuid();localStorage.setItem(k,v);}return v;}catch(_){return uuid();}}
+  function getLastName(){try{return localStorage.getItem('macauw-player-name-v1')||'';}catch(_){return '';}}
+  function storeLastName(v){try{localStorage.setItem('macauw-player-name-v1',v);}catch(_){}}
+  async function request(path,options={}) {
+    if(!ready)throw new Error(configError());
+    const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),12000);
+    try {
+      const authHeaders={apikey:cfg.publishableKey};
+      if(!cfg.publishableKey.startsWith('sb_publishable_'))authHeaders.Authorization='Bearer '+cfg.publishableKey;
+      const response=await fetch(api+path,{...options,signal:controller.signal,
+        headers:{...authHeaders,...(options.body?{'Content-Type':'application/json'}:{}),...options.headers}});
+      let body;try{body=await response.json();}catch(_){body=null;}
+      if(!response.ok)throw new Error(body?.message||body?.error||body?.hint||'Supabase request failed ('+response.status+')');
+      return body;
+    } finally {clearTimeout(timeout);}
+  }
+  const format=v=>Number(v).toLocaleString('af-ZA');
+
+  function showDialog(result,kind){
+    document.getElementById('macauwLbDialog')?.remove();
+    const backdrop=el('div','position:absolute;inset:0;z-index:10100;background:#061421eF;display:flex;align-items:center;justify-content:center;padding:12px;overflow:auto;'+styles);
+    backdrop.id='macauwLbDialog';
+    const card=el('section','width:min(650px,96vw);max-height:93vh;overflow:auto;padding:clamp(14px,3vw,25px);border-radius:18px;background:#103048;border:1px solid #426b83;box-shadow:0 15px 60px #000b;'+styles);
+    const top=el('div','display:flex;gap:8px;align-items:center;justify-content:space-between');
+    top.append(el('h2','font-size:clamp(19px,3vw,28px);margin:0;','MACAUW LEIERBORD'));
+    const close=button('TERUG','border:1px solid #9baeba;background:#203e51;color:#fff;border-radius:9px;padding:9px 13px;font-weight:800');
+    close.addEventListener('click',()=>backdrop.remove()); top.append(close);card.append(top);
+    const status=el('p','color:#e0c68c;font-size:13px;min-height:18px;margin:10px 0;','');
+    if(kind==='submit') {
+      card.append(el('p','font-size:14px;color:#c5ddec;margin:12px 0;',`${modes[result.mode]} — ${format(result.score)} ${result.mode==='koedoe'?'KG':'PUNTE'} — ${result.hits} TREFFERS`));
+      const label=el('label','display:block;color:#dce8f2;font-size:13px;font-weight:700;margin:6px 0','JOU SPELERSNAAM (2–24 KARAKTERS)');
+      const input=el('input','width:100%;padding:13px 11px;font-size:17px;border:1px solid #67899b;border-radius:9px;background:#fff;color:#092238;'+styles);
+      input.style.color='#092238';input.value=getLastName();input.maxLength=24;input.autocomplete='nickname';input.placeholder='Jou naam';
+      card.append(label,input);
+      const submit=button('STUUR MY TELLING IN');submit.style.marginTop='12px';submit.style.width='100%';
+      submit.addEventListener('click',async()=>{
+        const player_name=input.value.trim();
+        if(player_name.length<2||player_name.length>24||/[<>\r\n\x00-\x1f]/.test(player_name)){status.textContent='Voer asseblief ’n geldige naam van 2–24 karakters in.';return;}
+        if(result.submitted){status.textContent='Hierdie rondte is reeds ingestuur.';return;}
+        if(!ready){status.textContent=configError();return;}
+        submit.disabled=true;submit.textContent='STUUR IN ...';status.textContent='Stuur na Supabase ...';
+        try {
+          await request('/rest/v1/rpc/submit_macauw_score',{method:'POST',body:JSON.stringify({p_round_id:result.roundId,p_player_token:getToken(),p_player_name:player_name,p_game_mode:result.mode,p_score:result.score,p_hits:result.hits,p_shots:result.shots})});
+          storeLastName(player_name);result.submitted=true;result.submitButton.textContent='TELLING INGESTUUR';result.submitButton.disabled=true;
+          status.textContent='SUKSES! Jou telling is op die leierbord.';submit.textContent='SUKSES';
+          await loadBoard(card,status,result.mode);
+        } catch(e) {status.textContent=e?.message||'Kon nie die telling stoor nie.';submit.disabled=false;submit.textContent='PROBEER WEER';}
+      });
+      card.append(submit);
+    }
+    card.append(status);
+    const row=el('div','display:flex;gap:8px;flex-wrap:wrap;margin:10px 0');
+    const select=el('select','flex:1;min-width:150px;padding:9px;border-radius:9px;border:1px solid #7395aa;background:#20455d;color:white;');
+    for(const [value,label] of Object.entries(modes)){const opt=document.createElement('option');opt.value=value;opt.textContent=label;select.append(opt);}
+    select.value=result.mode;const refresh=button('WYS TOP 20');
+    refresh.addEventListener('click',()=>loadBoard(card,status,select.value));
+    select.addEventListener('change',()=>loadBoard(card,status,select.value));row.append(select,refresh);card.append(row);
+    const table=el('div','width:100%;max-height:36vh;overflow:auto');table.id='macauwLbRows';card.append(table);
+    backdrop.append(card);document.getElementById('arena').append(backdrop);
+    if(kind==='view')loadBoard(card,status,result.mode);
+    if(kind==='submit')setTimeout(()=>input.focus(),0);
+  }
+  async function loadBoard(card,status,mode){
+    const table=card.querySelector('#macauwLbRows');table.replaceChildren();status.textContent='Laai leierbord ...';
+    try {
+      const rows=await request('/rest/v1/macauw_leaderboard_public?select=player_name,score,hits,shots,accuracy,created_at&game_mode=eq.'+encodeURIComponent(mode)+'&order=score.desc,hits.desc,created_at.asc&limit=20');
+      const head=el('div','display:grid;grid-template-columns:32px 1fr 85px 70px;gap:8px;padding:8px;color:#b8cbd8;font-size:11px;font-weight:900','');
+      for(const val of ['#','SPELER','TELLING','TREFFERS'])head.append(el('span','',val));table.append(head);
+      rows.forEach((r,i)=>{const line=el('div','display:grid;grid-template-columns:32px 1fr 85px 70px;gap:8px;padding:10px 8px;border-top:1px solid #ffffff23;font-size:13px;align-items:center');for(const v of [String(i+1),r.player_name,format(r.score),String(r.hits)])line.append(el('span','overflow-wrap:anywhere',v));table.append(line);});
+      if(!rows.length)table.append(el('p','color:#b9cddd;font-size:13px','Nog geen tellings vir hierdie spel nie.'));
+      status.textContent='TOP 20 — '+modes[mode];
+    }catch(e){status.textContent=e?.message||'Leierbord nie beskikbaar nie.';}
+  }
+  function installResultsPanel(panel){
+    if(panel.dataset.macauwLeaderboard==='1')return;
+    const state=window.__ECLAY_TEST__?.getState?.();if(!state||!state.ended)return;
+    const section=panel.querySelector('section');if(!section)return;
+    panel.dataset.macauwLeaderboard='1';
+    const row=el('div','display:flex;gap:9px;margin-top:10px;flex-wrap:wrap');
+    const submit=button('VOEG MY TELLING BY LEIERBORD');submit.style.flex='1 1 220px';
+    const view=button('WYS LEIERBORD','flex:1 1 135px;padding:13px 10px;background:#25445d;color:#fff;border:1px solid #7295b0;border-radius:10px;font-weight:800;cursor:pointer');
+    row.append(submit,view);section.append(row);
+    const result={roundId:uuid(),mode:state.mode,score:Math.round(state.score),hits:state.hits,shots:state.shots,submitted:false,submitButton:submit};
+    if(result.score<=0){submit.disabled=true;submit.textContent='GEEN TELLING OM IN TE STUUR';}
+    submit.addEventListener('click',()=>showDialog(result,'submit'));
+    view.addEventListener('click',()=>showDialog(result,'view'));
+  }
+  function init(){
+    const arena=document.getElementById('arena');if(!arena)return;const actions=document.getElementById('macauw-menu-actions');if(!actions){const observer=new MutationObserver(()=>{if(document.getElementById('macauw-menu-actions')){observer.disconnect();init();}});observer.observe(document.body,{childList:true,subtree:true});return;}if(actions&&!document.getElementById('macauw-view-leaderboard')){const row=el('div','flex-basis:100%;display:flex;justify-content:center;margin-top:3px');const btn=button('BEKYK RANGLYS','padding:11px 24px;border-radius:10px;background:#25445d;color:white;border:1px solid #7295b0;font-weight:850;cursor:pointer');btn.id='macauw-view-leaderboard';btn.addEventListener('click',()=>showDialog({mode:'skeet'},'view'));row.append(btn);actions.append(row);}
+    new MutationObserver(mutations=>{for(const m of mutations){for(const node of m.addedNodes){if(node.nodeType===1&&node.id==='macauwResults')installResultsPanel(node);}}}).observe(arena,{childList:true});
+    const panel=document.getElementById('macauwResults');if(panel)installResultsPanel(panel);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();

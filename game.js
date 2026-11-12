@@ -172,6 +172,8 @@
   }
   function announce(s,duration=.6){ui.toast.textContent=s;ui.toast.classList.add('show');popupEnd=performance.now()+duration*1000;}
 
+  function hareScoreUnit(){return window.MacauwLanguage?.get?.()==='en'?'EASTER EGGS COLLECTED':'PAASEIERS GEKRY';}
+
   function formatScore(value=score,currentMode=mode){
     if(currentMode==='koedoe')return Math.round(Number(value||0)).toLocaleString('af-ZA');
     return Math.round(Number(value||0)).toLocaleString('af-ZA');
@@ -195,7 +197,7 @@
     ui.timer.textContent=olympic?String(Math.max(0,25-olympicDone)):time.toLocaleString('af-ZA',{minimumFractionDigits:1,maximumFractionDigits:1});
     $('timerLabel').textContent=olympic?'TEIKENS OOR':'TYD OOR';
     ui.score.textContent=formatScore(score);
-    ui.scoreLabel.textContent=mode==='koedoe'?'KG BILTONG':'PUNTE';
+    ui.scoreLabel.textContent=mode==='koedoe'?'KG BILTONG':mode==='hares'?hareScoreUnit():'PUNTE';
     ui.hits.textContent=String(hits);
     ui.accuracy.textContent=shots?Math.round(hits/shots*100)+'%':'—';
     ui.shots.textContent=String(shots);
@@ -268,10 +270,10 @@
       '<b style="color:#ffcd75;font-size:1.6em">'+hits+' / 25 TREFFERS</b><br>'+escaped+' gemis · '+shots+' skote geneem · '+(shots?Math.round(hits/shots*100):0)+'% akkuraatheid':
       (kuduMode
         ? '<b style="color:#ffcd75;font-size:1.6em">'+formatScore(score,'koedoe')+' KG BILTONG</b><br>'+hits+' koedoes in die kilsone getref · '+(shots?Math.round(hits/shots*100):0)+'% akkuraatheid · '+escaped+' gemis'
-        : '<b style="color:#ffcd75;font-size:1.6em">'+score.toLocaleString('af-ZA')+' PUNTE</b><br>'+hits+(bird?' voëls':hareMode?' hase':' kleiduiwe')+' getref · '+(shots?Math.round(hits/shots*100):0)+'% akkuraatheid · '+escaped+' gemis');
+        : '<b style="color:#ffcd75;font-size:1.6em">'+score.toLocaleString('af-ZA')+(hareMode?' '+hareScoreUnit():' PUNTE')+'</b><br>'+hits+(bird?' voëls':hareMode?' hase':' kleiduiwe')+' getref · '+(shots?Math.round(hits/shots*100):0)+'% akkuraatheid · '+escaped+' gemis');
     ui.desc.innerHTML=result+'<br>'+((score===best && score>0)?'<b style="color:#8ce78a">NUWE PERSOONLIKE REKORD!</b>':(kuduMode?'Beste: '+formatScore(best,'koedoe')+' kg':'Beste: '+best.toLocaleString('af-ZA')));
     ui.btnStart.textContent=olympic?'↻ SPEEL WEER — 25 TEIKENS':'↻ SPEEL WEER — 60 SEKONDES';
-    ui.intro.classList.add("hidden"); const oldPanel=document.getElementById("macauwResults");if(oldPanel)oldPanel.remove();const panel=document.createElement("div");panel.id="macauwResults";panel.style.cssText="position:absolute;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:#061522ed;padding:15px;box-sizing:border-box;overflow:auto";const acc=shots?Math.round(hits/shots*100):0;const main=mode==="koedoe"?formatScore(score,mode)+" KG BILTONG":mode==="olympic"?hits+" / 25":formatScore(score)+" PUNTE";const names={skeet:"SKEET",trap:"TRAP",olympic:"OLIMPIESE SKEET",hares:"HASE",waterfowl:"WATERVOELS",koedoe:"KOEDOE"};panel.innerHTML=`<section style="font-family:system-ui;color:white;text-align:center;width:min(760px,96vw);max-height:95vh;overflow:auto;box-sizing:border-box;background:linear-gradient(145deg,#173b55,#071624);border:2px solid #42647c;border-radius:22px;padding:clamp(14px,3vw,30px);box-shadow:0 20px 70px #000b"><div style="letter-spacing:3px;color:#a9cbdc;font-size:12px">MACAUW - RONDTE VOLTOOI</div><h2 style="font-size:clamp(23px,4vw,40px);margin:12px 0">UITSTEKENDE POGING!</h2><div style="color:#ffcb76;font-weight:bold">${names[mode]}</div><div style="font-size:clamp(42px,8vw,82px);font-weight:900;color:#ffbe59;margin:12px 0">${main}</div><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">${[["TREFFERS",hits],["SKOTE",shots],["AKKURAATHEID",acc+"%"]].map(x=>`<div style="background:#21465f;border-radius:12px;padding:12px 4px"><strong style="display:block;font-size:clamp(24px,4vw,38px)">${x[1]}</strong><small>${x[0]}</small></div>`).join("")}</div><p style="color:#c3d6e3">SKOTE GEMIS: ${Math.max(0,shots-hits)} &nbsp; | &nbsp; PERSOONLIKE BESTE: ${formatScore(best)}</p><div style="display:flex;gap:10px;margin-top:20px"><button id="resultsReplay" style="flex:1;padding:15px;background:#168a3c;border:0;border-radius:10px;color:white;font-size:17px;font-weight:900">SPEEL WEER</button><button id="resultsMenu" style="flex:1;padding:15px;background:#31516b;border:0;border-radius:10px;color:white;font-size:17px;font-weight:900">HOOFSKERM</button></div></section>`;$("arena").appendChild(panel);panel.querySelector("#resultsReplay").onclick=()=>{panel.remove();startGame();};panel.querySelector("#resultsMenu").onclick=()=>{panel.remove();ui.title.innerHTML="E-KLEIDUIF<br><em>UITDAGING</em>";ui.intro.classList.remove("hidden");selectMode(mode);};
+    ui.intro.classList.add("hidden"); const oldPanel=document.getElementById("macauwResults");if(oldPanel)oldPanel.remove();const panel=document.createElement("div");panel.id="macauwResults";panel.style.cssText="position:absolute;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:#061522ed;padding:15px;box-sizing:border-box;overflow:auto";const acc=shots?Math.round(hits/shots*100):0;const main=mode==="koedoe"?formatScore(score,mode)+" KG BILTONG":mode==="olympic"?hits+" / 25":formatScore(score)+(mode==="hares"?" "+hareScoreUnit():" PUNTE");const names={skeet:"SKEET",trap:"TRAP",olympic:"OLIMPIESE SKEET",hares:"HASE",waterfowl:"WATERVOELS",koedoe:"KOEDOE"};panel.innerHTML=`<section style="font-family:system-ui;color:white;text-align:center;width:min(760px,96vw);max-height:95vh;overflow:auto;box-sizing:border-box;background:linear-gradient(145deg,#173b55,#071624);border:2px solid #42647c;border-radius:22px;padding:clamp(14px,3vw,30px);box-shadow:0 20px 70px #000b"><div style="letter-spacing:3px;color:#a9cbdc;font-size:12px">MACAUW - RONDTE VOLTOOI</div><h2 style="font-size:clamp(23px,4vw,40px);margin:12px 0">UITSTEKENDE POGING!</h2><div style="color:#ffcb76;font-weight:bold">${names[mode]}</div><div style="font-size:clamp(42px,8vw,82px);font-weight:900;color:#ffbe59;margin:12px 0">${main}</div><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">${[["TREFFERS",hits],["SKOTE",shots],["AKKURAATHEID",acc+"%"]].map(x=>`<div style="background:#21465f;border-radius:12px;padding:12px 4px"><strong style="display:block;font-size:clamp(24px,4vw,38px)">${x[1]}</strong><small>${x[0]}</small></div>`).join("")}</div><p style="color:#c3d6e3">SKOTE GEMIS: ${Math.max(0,shots-hits)} &nbsp; | &nbsp; PERSOONLIKE BESTE: ${formatScore(best)}</p><div style="display:flex;gap:10px;margin-top:20px"><button id="resultsReplay" style="flex:1;padding:15px;background:#168a3c;border:0;border-radius:10px;color:white;font-size:17px;font-weight:900">SPEEL WEER</button><button id="resultsMenu" style="flex:1;padding:15px;background:#31516b;border:0;border-radius:10px;color:white;font-size:17px;font-weight:900">HOOFSKERM</button></div></section>`;$("arena").appendChild(panel);panel.querySelector("#resultsReplay").onclick=()=>{panel.remove();startGame();};panel.querySelector("#resultsMenu").onclick=()=>{panel.remove();ui.title.innerHTML="E-KLEIDUIF<br><em>UITDAGING</em>";ui.intro.classList.remove("hidden");selectMode(mode);};
     $('callTarget').classList.add('hidden');
     setUi();
   }
@@ -411,6 +413,9 @@
     // Stop this particular hare immediately; a dead target never scores twice.
     fallenHares.push({...c,deathAge:0,frame:hareFrame(c)});
     flashHareHit(c);
+    const eggs=new Image();eggs.src='/assets/hare-hit-eggs.png';
+    const overlay=document.createElement('img');overlay.src=eggs.src;overlay.style.cssText='position:absolute;pointer-events:none;z-index:100;width:'+Math.round(270*(c.scale||1))+'px;transform:translate(-50%,-50%);filter:drop-shadow(0 6px 12px #0007);';
+    const arena=document.getElementById('arena');overlay.style.left=(c.x/1600*100)+'%';overlay.style.top=(c.y/900*100)+'%';arena.appendChild(overlay);setTimeout(()=>overlay.remove(),300);
   }
 
   const KUDU_IMAGE_W=KUDU_VIDEO_W, KUDU_IMAGE_H=KUDU_VIDEO_H;
@@ -500,17 +505,17 @@
     const now=performance.now();
     for(let i=featherBursts.length-1;i>=0;i--){
       const b=featherBursts[i];
-      const frame=Math.floor((now-b.t)/90);
-      if(frame>=12){featherBursts.splice(i,1);continue;}
+      const frame=Math.floor((now-b.t)/(b.species==='GANS'?45:90));
+      if(frame>=((b.species==='EEND'||b.species==='GANS')?11:12)){featherBursts.splice(i,1);continue;}
       const image=featherAtlases[b.species];
       if(!image||!image.complete||!image.naturalWidth||!image.naturalHeight)continue;
       const w=image.naturalWidth/4,h=image.naturalHeight/3;
-      ctx.drawImage(image,(frame%4)*w,Math.floor(frame/4)*h,w,h,
-        b.x-b.size/2,b.y-b.size/2,b.size,b.size);
+      ctx.save();ctx.translate(b.x+((b.species==='GANS'||b.species==='EEND'||b.species==='ROTSDUIF')?(b.vx||0)*(1-Math.exp(-2.5*(now-b.t)/1000))/2.5:0),b.y);if((b.species==='EEND'&&b.direction<0)||(b.species==='GANS'&&b.direction>0))ctx.scale(-1,1);ctx.drawImage(image,(frame%4)*w,Math.floor(frame/4)*h,w,h,
+        -b.size/2,-b.size/2,b.size,b.size);ctx.restore();
     }
   }
   function feathers(c){
-    featherBursts.push({species:c.species,x:c.x,y:c.y,t:performance.now(),size:Math.max(180,Math.min(450,c.r*(c.depth||1)*7))});
+    featherBursts.push({species:c.species,x:c.x,y:c.y,vx:c.vx,t:performance.now(),direction:c.vx>=0?1:-1,size:c.species==='EEND'?c.r*4.75*(c.depth||1):c.species==='GANS'?c.r*4.45*(c.depth||1):Math.max(180,Math.min(450,c.r*(c.depth||1)*7))*.7});
     const colors=c.species==='ROTSDUIF'?['#aa6460','#855454','#a3a1a1','#f1e8d7']:c.species==='GANS'?['#e2d7b8','#b0a18a','#6b5844']:['#6e4a34','#ba9b75','#e9e2cf','#23704f'];
     for(let j=0;j<20;j++){
       const a=rand(0,6.283),v=rand(45,280);

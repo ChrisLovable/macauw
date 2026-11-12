@@ -1,0 +1,181 @@
+/* Macauw premium menu v2. Visual overrides only. No game behaviour changed. */
+#intro.overlay {
+  background:linear-gradient(105deg,rgba(0,12,24,.73),rgba(3,18,29,.58));
+  backdrop-filter:blur(7px);
+}
+#intro .welcome-card {
+  width:min(1220px,97vw);
+  max-height:calc(100dvh - 28px);
+  min-height:min(690px,calc(100dvh - 32px));
+  padding:clamp(20px,2.9vw,42px) clamp(22px,3.15vw,48px) 20px;
+  gap:clamp(24px,3vw,48px);
+  grid-template-columns:minmax(0,1fr) minmax(0,1.04fr);
+  border:1px solid rgba(180,219,243,.77);
+  border-radius:30px;
+  background:linear-gradient(120deg,rgba(28,58,74,.97) 0%,rgba(7,28,43,.99) 32%,rgba(4,19,32,.99) 63%,rgba(13,36,51,.97) 100%);
+  box-shadow:0 28px 100px #000b,0 0 0 1px #d8ebf217,inset 0 1px 0 #ffffff45,inset 0 -2px 24px #8fbadb0b;
+  overflow:auto;
+}
+#intro .welcome-card::before {
+  z-index:-1;
+  background:
+    radial-gradient(ellipse at 1% 2%,#ffba4e36,transparent 31%),
+    radial-gradient(ellipse at 96% 95%,#7ea5cc18,transparent 36%),
+    linear-gradient(136deg,transparent 4%,#e7a53e20 4.2%,transparent 4.6%,transparent 9%,#ffd68413 9.15%,transparent 9.5%);
+}
+#intro .welcome-heading {
+  position:relative;
+  align-self:stretch;
+  align-items:flex-start;
+  padding:14px clamp(21px,3vw,42px) 14px 4px;
+  border-right:1px solid #c5d9e13b;
+  text-align:left;
+}
+#intro .welcome-heading::before {
+  content:'';position:absolute;left:-20px;top:-14px;width:210px;height:120px;pointer-events:none;
+  border-top:2px solid transparent;border-radius:90% 0 0 0;
+  background:linear-gradient(145deg,transparent 39%,#e9a93c66 39.5%,#ffe4a18f 40%,transparent 40.7%,transparent 54%,#d68c2650 54.5%,transparent 55.1%);
+  filter:drop-shadow(0 0 6px #ffbd4b62);
+}
+#intro .welcome-heading::after {
+  content:'';position:absolute;right:28px;bottom:2px;width:270px;height:85px;pointer-events:none;
+  background:linear-gradient(161deg,transparent 53%,#eab45c5e 53.3%,#ffdc926b 53.7%,transparent 54.3%,transparent 63%,#d58b2c49 63.4%,transparent 64%);
+}
+#intro .macauw-badge-hero {
+  width:clamp(150px,16.4vw,218px);
+  height:clamp(150px,16.4vw,218px);
+  margin:0 auto clamp(18px,2.4vh,25px);
+  border-radius:50%;
+  background:radial-gradient(circle at 42% 33%,#ffffff16,#d59a2813 60%,transparent 72%);
+  filter:drop-shadow(0 6px 3px #000a) drop-shadow(0 0 14px #feb34a85) drop-shadow(0 0 26px #de8d2646);
+}
+#intro .eyebrow {
+  color:#ffdfa4;
+  font-size:clamp(10px,1.0vw,13px);
+  font-weight:900;
+  letter-spacing:.18em;
+  margin:0 0 18px;
+  text-shadow:0 1px 10px #0009;
+}
+#intro .welcome-heading h1 {
+  font-size:clamp(43px,4.9vw,72px);
+  font-weight:1000;
+  line-height:.96;
+  letter-spacing:-.052em;
+  color:#f7f9ff;
+  text-shadow:0 3px 0 #a5b6be32,0 6px 16px #000a;
+  margin:0 0 22px;
+}
+#intro .welcome-heading h1 em {
+  color:#ffb436;
+  text-shadow:0 3px 0 #8b490833,0 0 12px #ffaf2e21;
+}
+#intro .welcome-heading p {
+  color:#d8e2eb;
+  font-size:clamp(12px,1.16vw,16px);
+  line-height:1.55;
+  max-width:455px;
+}
+#intro .welcome-settings {justify-content:center;align-self:stretch;}
+#intro .mode-heading {
+  position:relative;
+  font-size:clamp(12px,1.16vw,16px);
+  font-weight:950;
+  letter-spacing:.19em;
+  margin:0 0 19px;
+  color:#f0f5ff;
+  text-shadow:0 2px 7px #0008;
+}
+#intro .mode-heading::before,#intro .mode-heading::after {
+  content:'';display:inline-block;vertical-align:middle;width:35px;height:2px;margin:0 17px 4px 0;
+  background:linear-gradient(90deg,transparent,#ffbd3d,#ffdf74);box-shadow:0 0 8px #ffb6296e;
+}
+#intro .mode-heading::after {margin:0 0 4px 17px;transform:scaleX(-1)}
+#intro .mode-select {gap:12px;margin:0 0 22px;}
+#intro .mode {
+  min-height:74px;
+  border-radius:14px;
+  border:1px solid #84a6b7b0;
+  background:linear-gradient(180deg,#284357e8,#0c2233f5);
+  box-shadow:inset 0 1px 0 #ffffff36,inset 0 -2px 0 #0005,0 7px 15px #0006;
+  gap:14px;
+  transition:transform .13s,border-color .13s,box-shadow .13s;
+}
+#intro .mode:hover {transform:translateY(-1px);border-color:#c9d8e2;box-shadow:inset 0 1px 0 #ffffff45,0 8px 19px #0008;}
+#intro .mode.active {
+  border:2px solid #ffc85a;
+  background:linear-gradient(155deg,#8b602a,#2c2d2d 48%,#172733);
+  box-shadow:inset 0 1px 0 #fff2b890,inset 0 0 18px #ffbd4230,0 0 15px #ffc65a4d,0 7px 13px #0008;
+}
+#intro .mode b {font-size:clamp(14px,1.35vw,18px);line-height:1.15;letter-spacing:.012em;text-align:left;}
+#intro .mode::before {font-size:clamp(24px,2.5vw,35px);min-width:36px;text-align:center;text-shadow:0 2px 6px #0009;}
+#intro .mode[data-mode='skeet']::before {content:'◉'}
+#intro .mode[data-mode='trap']::before {content:'⌂'}
+#intro .mode[data-mode='olympic']::before {content:'◎'}
+#intro .mode[data-mode='koedoe']::before {content:'♞'}
+#intro #start {
+  min-height:78px;
+  border-radius:999px;
+  border:2px solid #a8ff68;
+  padding:14px 18px;
+  font-size:clamp(28px,2.8vw,38px);
+  font-weight:1000;
+  background:linear-gradient(180deg,#63fb48 0%,#19b30e 35%,#06860b 67%,#034915 100%);
+  box-shadow:inset 0 3px 0 #ffffff69,inset 0 -4px 11px #004c1c80,0 8px 23px #000a,0 0 13px #6bfa3940;
+  letter-spacing:.065em;
+  text-shadow:0 3px 3px #03480c;
+}
+#intro #start:hover {filter:brightness(1.09)}
+#intro .tips {font-size:clamp(10px,.93vw,12px);margin-top:14px;color:#c1d2db;}
+#intro #howto {font-size:clamp(11px,1.02vw,13px);font-weight:800;color:#ffce54;}
+#intro #macauw-lang-control {margin:18px 0 12px!important;gap:13px;}
+#intro #macauw-lang-control button {min-height:36px;padding:8px 16px!important;}
+#intro #macauw-menu-actions {gap:12px!important;margin:10px 0 0!important;}
+#intro #macauw-menu-actions>button {min-height:53px;border-radius:12px!important;font-size:clamp(11px,1vw,14px)!important;letter-spacing:.015em;}
+#intro #macauw-view-leaderboard {min-height:45px;min-width:235px!important;border-radius:12px!important;font-size:clamp(11px,1vw,14px)!important;}
+#intro .disclaimer {padding-top:13px;margin-top:9px;color:#a5b9c6;letter-spacing:.005em;}
+/* Preserve usable layout on short browser windows, phones and TV landscape */
+@media(max-height:790px) {
+  #intro .welcome-card {min-height:0;max-height:97dvh;padding:clamp(14px,2vw,26px);gap:clamp(14px,2vw,30px)}
+  #intro .welcome-heading {padding-right:22px}
+  #intro .macauw-badge-hero {width:clamp(105px,14vh,165px);height:clamp(105px,14vh,165px);margin-bottom:10px}
+  #intro .welcome-heading h1 {font-size:clamp(36px,4vw,57px);margin-bottom:12px}
+  #intro .welcome-heading p {font-size:clamp(11px,1vw,13px)}
+  #intro .eyebrow {margin-bottom:11px}
+  #intro .mode-heading {margin-bottom:9px}
+  #intro .mode-select {margin-bottom:11px;gap:8px}
+  #intro .mode {min-height:52px;padding:7px}
+  #intro #start {min-height:57px;padding:8px;font-size:clamp(23px,2.4vw,31px)}
+  #intro .tips {margin-top:6px}
+  #intro #macauw-lang-control {margin:7px 0!important}
+  #intro #macauw-menu-actions {margin:5px 0 0!important;gap:7px!important}
+  #intro #macauw-menu-actions>button {min-height:39px}
+  #intro #macauw-view-leaderboard {min-height:36px}
+  #intro .disclaimer {margin-top:2px;padding-top:6px}
+}
+@media(max-height:540px) {
+  #intro .welcome-card {padding:9px 15px;gap:13px}
+  #intro .macauw-badge-hero {width:67px;height:67px;margin-bottom:3px}
+  #intro .welcome-heading h1 {font-size:clamp(28px,3.1vw,41px);margin-bottom:5px}
+  #intro .eyebrow {font-size:9px;margin-bottom:5px}
+  #intro .mode {min-height:36px;padding:4px}
+  #intro .mode::before {font-size:17px}
+  #intro .mode b {font-size:11px}
+  #intro .mode-select {gap:4px;margin-bottom:5px}
+  #intro #start {min-height:38px;padding:5px;font-size:19px}
+  #intro #macauw-lang-control {margin:3px 0!important}
+  #intro #macauw-menu-actions>button {min-height:29px}
+  #intro #macauw-view-leaderboard {min-height:29px}
+}
+@media(max-width:660px) {
+  #intro .welcome-card {grid-template-columns:1fr;min-height:0;gap:13px;max-height:97dvh;overflow:auto}
+  #intro .welcome-heading {border-right:0;border-bottom:1px solid #ffffff36;align-items:center;text-align:center;padding:0 0 12px}
+  #intro .welcome-heading::before,#intro .welcome-heading::after {display:none}
+  #intro .macauw-badge-hero {width:76px;height:76px}
+  #intro .welcome-heading h1 {font-size:clamp(29px,7vw,40px)}
+  #intro .welcome-heading p {font-size:11px}
+  #intro .mode-heading::before,#intro .mode-heading::after {width:15px;margin-left:7px;margin-right:7px}
+  #intro .mode {min-height:42px}
+  #intro .mode::before {font-size:18px;min-width:23px}
+  #intro .mode b {font-size:12px}
+}
