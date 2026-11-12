@@ -371,7 +371,7 @@
     const speedIndex=[3,3,2,1,0][distanceIndex]; // Fixed speed per row: fastest near, slowest far.
     const sp=HARE_SPEEDS[speedIndex],dist=HARE_DEPTHS[distanceIndex];
     // 2x horizontal speed AND 2x stride rate; 2x sprite dimensions and hit area.
-    const runSpeed=2*(205+18*n)*sp.move*dist.move;
+    const runSpeed=2*(205+18*n)*sp.move*dist.move*(distanceIndex===4?3:1);
     const points=[100,200,300,400,500][distanceIndex]; // Higher speed = higher score.
     const scale=2*dist.scale*rand(.96,1.04);
     const padding=185*scale;
@@ -381,7 +381,7 @@
       x:entryX,y:dist.groundY,
       vx:direction*runSpeed,vy:0,g:0,maxAge:26,age:0,r:65*scale,
       rot:0,vr:0,seed:rand(0,7),tilt:0,scale,direction,
-      runHz:2*sp.runFps,speedLabel:sp.name,distanceLabel:dist.name,pointValue:points});
+      runHz:2*sp.runFps*(distanceIndex===4?3:1),speedLabel:sp.name,distanceLabel:dist.name,pointValue:points});
   }
   // Translate a shot into the actual visible 400x400 animation frame and
   // sample its alpha. This aligns hits with the drawn silhouette at every depth.
