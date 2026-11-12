@@ -237,6 +237,8 @@
   }
 
   const kuduAmbience=new Audio('/assets/kudu-gallop.mp3');kuduAmbience.loop=true;kuduAmbience.volume=.45;kuduAmbience.preload='auto';
+  /* macauw-kudu-hoofbeat-recovery-v1 */
+  document.getElementById("arena").addEventListener("pointerdown",()=>{if(mode==="koedoe"&&active&&!paused&&backgroundEnabled&&kuduAmbience.paused){kuduAmbience.play().catch(e=>console.warn("Kudu hoofbeats:",e));}},true);
   function startGame(){
     initAudio();if(mode==='koedoe'&&backgroundEnabled){kuduAmbience.currentTime=0;kuduAmbience.play().catch(()=>{});}else{kuduAmbience.pause();}
     // Start exact MP4 from the trusted tap so Android permits decoding.
@@ -702,7 +704,7 @@
         points=c.kgValue;
         score=Math.round((score+points)*10)/10;
       }else{
-        points=Math.round((100+(level-1)*30)*(1+Math.floor((streak-1)/5)*.25));
+        points=Math.round((100+(level-1)*30)*(1+Math.floor((streak-1)/5)*.25)); if(c.kind==='bird'){const factor=c.species==='ROTSDUIF'?1.5:c.species==='EEND'?1.25:1;points=Math.round(points*factor/10)*10;}
         score+=points;
       }
       if(c.kind==='bird')feathers(c);
