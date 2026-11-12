@@ -414,8 +414,8 @@
     fallenHares.push({...c,deathAge:0,frame:hareFrame(c)});
     flashHareHit(c);
     const eggs=new Image();eggs.src='/assets/hare-hit-eggs.png';
-    const overlay=document.createElement('img');overlay.src=eggs.src;overlay.style.cssText='position:absolute;pointer-events:none;z-index:100;width:'+Math.round(270*(c.scale||1))+'px;transform:translate(-50%,-50%);filter:drop-shadow(0 6px 12px #0007);';
-    const arena=document.getElementById('arena');overlay.style.left=(c.x/1600*100)+'%';overlay.style.top=(c.y/900*100)+'%';arena.appendChild(overlay);setTimeout(()=>overlay.remove(),300);
+    const overlay=document.createElement('img');overlay.src=eggs.src;overlay.style.cssText='position:absolute;pointer-events:none;z-index:100;width:'+84+'px;transform:translate(-50%,-50%);filter:drop-shadow(0 6px 12px #0007);';
+    const arena=document.getElementById('arena');overlay.style.left=(c.x/1600*100)+'%';overlay.style.top=(c.y/900*100)+'%';arena.appendChild(overlay);setTimeout(()=>overlay.remove(),100);
   }
 
   const KUDU_IMAGE_W=KUDU_VIDEO_W, KUDU_IMAGE_H=KUDU_VIDEO_H;
