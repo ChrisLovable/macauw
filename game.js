@@ -512,7 +512,7 @@
       const frame=Math.floor((now-b.t)/90);
       if(frame>=12){featherBursts.splice(i,1);continue;}
       const w=image.naturalWidth/4,h=image.naturalHeight/3;
-      ctx.save();ctx.translate(b.x+((b.species==='GANS'||b.species==='EEND'||b.species==='ROTSDUIF')?(b.vx||0)*(1-Math.exp(-2.5*(now-b.t)/1000))/2.5:0),b.y);if((b.species==='EEND'&&b.direction<0)||(b.species==='GANS'&&b.direction>0))ctx.scale(-1,1);ctx.drawImage(image,(frame%4)*w,Math.floor(frame/4)*h,w,h,
+      ctx.save();ctx.translate(b.x+((b.species==='GANS'||b.species==='EEND'||b.species==='ROTSDUIF')?(b.vx||0)*(b.species==="GANS"?2.5:1)*(1-Math.exp(-2.5*(now-b.t)/1000))/2.5:0),b.y);if((b.species==='EEND'&&b.direction<0)||(b.species==='GANS'&&b.direction>0))ctx.scale(-1,1);ctx.drawImage(image,(frame%4)*w,Math.floor(frame/4)*h,w,h,
         -b.size/2,-b.size/2,b.size,b.size);ctx.restore();
     }
   }
