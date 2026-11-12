@@ -104,7 +104,7 @@
   let biltongBursts=[];
   let hare=null, hareNext=1.4, harePasses=0;
   let fallenHares=[];
-  let audioEnabled=true,audioCtx=null;
+  let audioEnabled=true,backgroundEnabled=true,audioCtx=null;
   let vibrationEnabled=true;
   let best=0, lastPopup=0, popupEnd=0, pointer={x:800,y:425};
   // ISSF 2026 Skeet qualification: 25 targets, one shot per clay.
@@ -118,8 +118,8 @@
   let releaseDelay=0,stationClock=30;
   const arcadeLabels={skeet:'SKEET · DWARSVLUGTE',trap:'TRAP · WEGVLUGTE',olympic:'OLIMPIESE SKEET · ISSF 2026',waterfowl:'VOËLS & WATERVOËLS · ARCADE',hares:'HASE · OOP VELD',koedoe:'KOEDOE · KILSONE'};
   const modeDescriptions={
-    skeet:'60 sekondes. Vyf al hoe moeiliker vlakke van dwarsvlieënde kleiduiwe.',
-    trap:'60 sekondes. Wegvlieënde kleiduiwe word vinniger en kleiner.',
+    skeet:'60 sekondes. Vyf al hoe moeiliker vlakke van dwarsvlieënde kleiduiwe. Mik voor die kleiduif; hoe vinniger dit vlieg, hoe verder voor hom moet jy mik.',
+    trap:'60 sekondes. Wegvlieënde kleiduiwe word vinniger en kleiner. Mik verder voor die kleiduif namate sy spoed toeneem.',
     olympic:'25 teikens op 8 stasies volgens die ISSF 2026-kwalifikasievolgorde. Een skoot per teiken; roep die teikens self.',
     waterfowl:'60 sekondes. Bewegende eende, ganse en Afrika-rotsduiwe oor ’n dam. Vyf moeiliker vlakke.',
     hares:'60 sekondes. Hardlopende hase in oop veld. Vinniger en verder hase tel meer punte. Vyf moeiliker vlakke.',
@@ -173,7 +173,7 @@
   function announce(s,duration=.6){ui.toast.textContent=s;ui.toast.classList.add('show');popupEnd=performance.now()+duration*1000;}
 
   function formatScore(value=score,currentMode=mode){
-    if(currentMode==='koedoe')return Number(value||0).toLocaleString('af-ZA',{minimumFractionDigits:1,maximumFractionDigits:1});
+    if(currentMode==='koedoe')return Math.round(Number(value||0)).toLocaleString('af-ZA');
     return Math.round(Number(value||0)).toLocaleString('af-ZA');
   }
 
@@ -214,7 +214,7 @@
   function selectMode(newMode){
     if(active)return;
     mode=newMode;
-    if(mode!=='koedoe')kuduVideo.pause();
+    if(mode!=='koedoe'){kuduVideo.pause();kuduAmbience.pause();}
     best=loadBest();
     document.querySelectorAll('[data-mode]').forEach(el=>{
       el.classList.toggle('active',el.dataset.mode===mode);
@@ -234,8 +234,9 @@
     try{await screen.orientation?.lock?.('landscape');}catch(_){}
   }
 
+  const kuduAmbience=new Audio('/assets/kudu-gallop.mp3');kuduAmbience.loop=true;kuduAmbience.volume=.45;kuduAmbience.preload='auto';
   function startGame(){
-    initAudio();
+    initAudio();if(mode==='koedoe'&&backgroundEnabled){kuduAmbience.currentTime=0;kuduAmbience.play().catch(()=>{});}else{kuduAmbience.pause();}
     // Start exact MP4 from the trusted tap so Android permits decoding.
     if(mode==='koedoe')kuduVideo.play().catch(err=>{kuduVideoError=String(err)});
     requestImmersive(); // start button is a trusted user gesture
@@ -257,8 +258,8 @@
 
   function endGame(){
     if(ended)return;
-    active=false;ended=true;ui.pause.disabled=true;
-    if(mode==='koedoe')kuduVideo.pause();
+    active=false;ended=true;ui.pause.disabled=true;birdAmbience.pause();clayTrapAudio.pause();
+    if(mode==='koedoe'){kuduVideo.pause();kuduAmbience.pause();}
     if(score>best){best=score;try{localStorage.setItem('macauw-eclay-best-'+mode,String(best));}catch(_){}}
     sound(630,.14,'triangle',.07);sound(900,.2,'triangle',.06,.14);
     const olympic=mode==='olympic', bird=mode==='waterfowl', hareMode=mode==='hares', kuduMode=mode==='koedoe';
@@ -277,8 +278,8 @@
 
   function pauseGame(){
     if(!active)return;
-    paused=!paused;last=performance.now();
-    if(paused){if(mode==='koedoe')kuduVideo.pause();ui.toast.classList.remove('show');cancelAnimationFrame(raf);}
+    paused=!paused;last=performance.now();if(mode==='koedoe'){if(paused)kuduAmbience.pause();else if(backgroundEnabled)kuduAmbience.play().catch(()=>{});}
+    if(paused){if(mode==='koedoe'){kuduVideo.pause();kuduAmbience.pause();}ui.toast.classList.remove('show');cancelAnimationFrame(raf);}
     else{if(mode==='koedoe')ensureKuduVideo();ui.toast.classList.remove('show');raf=requestAnimationFrame(loop);}
     setUi();
   }
@@ -437,8 +438,8 @@
     const distanceIndex=weightedPick([.28,.43,.29]);
     const speedIndex=weightedPick([Math.max(.22,.46-n*.05),.33,.21+n*.05]);
     const sp=KUDU_SPEEDS[speedIndex],dist=KUDU_DEPTHS[distanceIndex];
-    const runSpeed=(214+16*n)*sp.move*dist.move;
-    const kg=Math.round((100*sp.points*dist.points)*10)/10;
+    const runSpeed=(214+20*n)*sp.move*dist.move;
+    const kg=Math.round((100*sp.points*dist.points)/10)*10;
     const scale=dist.scale*rand(.97,1.03);
     const padding=260*scale;
     clays.push({kind:'kuduTarget',species:'KUDU',x:direction>0?-padding:W+padding,y:dist.groundY,
@@ -485,7 +486,31 @@
     return;
   }
 
+  /* macauw-species-feathers-v65: species-specific 4x3 atlases; no changes to scoring or shooting */
+  const featherAtlases={
+    ROTSDUIF:new Image(),
+    GANS:new Image(),
+    EEND:new Image()
+  };
+  featherAtlases.ROTSDUIF.src='/assets/macauw-feather-hit-atlas.png';
+  featherAtlases.GANS.src='/assets/macauw-goose-feather-atlas.png';
+  featherAtlases.EEND.src='/assets/mallard-hit-atlas.png';
+  const featherBursts=[];
+  function drawFeatherBursts(){
+    const now=performance.now();
+    for(let i=featherBursts.length-1;i>=0;i--){
+      const b=featherBursts[i];
+      const frame=Math.floor((now-b.t)/90);
+      if(frame>=12){featherBursts.splice(i,1);continue;}
+      const image=featherAtlases[b.species];
+      if(!image||!image.complete||!image.naturalWidth||!image.naturalHeight)continue;
+      const w=image.naturalWidth/4,h=image.naturalHeight/3;
+      ctx.drawImage(image,(frame%4)*w,Math.floor(frame/4)*h,w,h,
+        b.x-b.size/2,b.y-b.size/2,b.size,b.size);
+    }
+  }
   function feathers(c){
+    featherBursts.push({species:c.species,x:c.x,y:c.y,t:performance.now(),size:Math.max(180,Math.min(450,c.r*(c.depth||1)*7))});
     const colors=c.species==='ROTSDUIF'?['#aa6460','#855454','#a3a1a1','#f1e8d7']:c.species==='GANS'?['#e2d7b8','#b0a18a','#6b5844']:['#6e4a34','#ba9b75','#e9e2cf','#23704f'];
     for(let j=0;j<20;j++){
       const a=rand(0,6.283),v=rand(45,280);
@@ -507,7 +532,7 @@
   }
   function releaseOlympicWave(){
     const wave=currentWave();if(!wave)return;
-    olympicState='flight';
+    olympicState='flight';playClayTrap(false);
     const station=wave.station,stationAngle=(station-4)*.085;
     wave.houses.forEach((house,order)=>{
       const fromHigh=house==='H';
@@ -707,8 +732,8 @@
         const base=2.25-(level-1)*.15;
         nextLaunch=rand(base*.83,base*1.15);
       }else if(mode==='koedoe'){
-        if(clays.filter(c=>c.kind==='kuduTarget').length<4)spawnClay();
-        const base=2.75-(level-1)*.18;
+        if(clays.filter(c=>c.kind==='kuduTarget').length<6)spawnClay();
+        const base=1.833333-(level-1)*.12;
         nextLaunch=rand(base*.86,base*1.16);
       }else{
         spawnClay();
@@ -899,7 +924,7 @@
   function draw(){
     ctx.clearRect(0,0,W,H);drawBackground();
     clays.forEach(c=>c.kind==='bird'?drawBird(c):c.kind==='hareTarget'?drawHareTarget(c):c.kind==='kuduTarget'?drawKuduTarget(c):drawClay(c));
-    fallenHares.forEach(c=>drawHareTarget(c,true));drawHare();drawParticles();drawBiltongBursts();drawCrosshair();
+    fallenHares.forEach(c=>drawHareTarget(c,true));drawHare();drawParticles();drawFeatherBursts();drawBiltongBursts();drawCrosshair();
   }
 
   function loop(now){
@@ -926,7 +951,7 @@
   });
   canvas.addEventListener('contextmenu',e=>e.preventDefault());
 
-  $('callTarget').addEventListener('click',callOlympic);
+  $('callTarget').addEventListener('click',callOlympic); const olympicPull=new Audio("/assets/olympic-pull.mp3");olympicPull.preload="auto";olympicPull.volume=1; /* macauw-olympic-pull-v59 */ $('callTarget').addEventListener('click',()=>{if(mode==="olympic"&&active&&!paused&&olympicState==="delay"&&audioEnabled){olympicPull.pause();olympicPull.currentTime=0;olympicPull.play().catch(()=>{});}});
   ui.btnStart.addEventListener('click',startGame);
   ui.pause.addEventListener('click',pauseGame);
   // macauw-stop-game-v1: Return to the existing main menu.
@@ -955,7 +980,7 @@
   stopBtn.addEventListener('click',()=>{
     cancelAnimationFrame(raf);
     active=false;paused=false;ended=false;
-    if(mode==='koedoe')kuduVideo.pause();
+    if(mode==='koedoe'){kuduVideo.pause();kuduAmbience.pause();}
     ui.pause.disabled=true;
     clays=[];shards=[];flashes=[];queued=[];bubbles=[];fallenHares=[];biltongBursts=[];
     ui.title.innerHTML='E-KLEIDUIF<br><em>UITDAGING</em>';
@@ -977,8 +1002,8 @@
     });
   }
   $('sound').addEventListener('click',()=>{
-    audioEnabled=!audioEnabled;
-    $('sound').textContent=audioEnabled?'♪ AAN':'♪ AF';
+    audioEnabled=!audioEnabled;if(!audioEnabled){shotPlayers.forEach(a=>{a.pause();a.currentTime=0;});}
+    $('sound').textContent=audioEnabled?'🔊 GEWEER KLANK AAN':'🔇 GEWEER KLANK AF';
     if(audioEnabled)sound(440,.09);
   });
   $('full').addEventListener('click',async()=>{
@@ -1013,7 +1038,7 @@
   if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){
     window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));
   }
-  selectMode('skeet');setUi();draw();
+  /* macauw-header-controls-v53 */ const soundControl=document.getElementById('sound');const stopControl=document.getElementById('stopGame');if(soundControl&&stopControl){stopControl.insertAdjacentElement('beforebegin',soundControl);soundControl.style.cssText='position:static;display:inline-block;flex:0 0 auto;align-self:center;margin:0 6px 0 0;padding:8px 12px;border:2px solid #fff;border-radius:8px;background:#18374a;color:white;font-size:14px;font-weight:800;white-space:nowrap;min-height:38px;min-width:95px';}document.getElementById('full')?.remove();document.getElementById('vibrate')?.remove();vibrationEnabled=true;/* macauw-clay-trap-audio-v54 */ const clayTrapAudio=new Audio("/assets/clay-trap.mp3");clayTrapAudio.preload="auto";clayTrapAudio.volume=.55;const playClayTrap=(loop)=>{clayTrapAudio.pause();clayTrapAudio.currentTime=0;clayTrapAudio.loop=loop;if(backgroundEnabled)clayTrapAudio.play().catch(()=>{});};ui.btnStart.addEventListener("click",()=>{if(mode==="skeet"||mode==="trap")playClayTrap(true);else clayTrapAudio.pause();});ui.pause.addEventListener("click",()=>{if(mode!=="skeet"&&mode!=="trap")return;if(paused)clayTrapAudio.pause();else if(backgroundEnabled)clayTrapAudio.play().catch(()=>{});});stopBtn.addEventListener("click",()=>clayTrapAudio.pause());/* macauw-separate-audio-v55 */ const gunControl=document.getElementById("sound");const backgroundControl=document.createElement("button");backgroundControl.id="backgroundSound";backgroundControl.type="button";backgroundControl.textContent="♪ AGTERGROND KLANK AAN";backgroundControl.style.cssText=gunControl.style.cssText;gunControl.insertAdjacentElement("beforebegin",backgroundControl);gunControl.textContent="🔊 GEWEER KLANK AAN";backgroundControl.addEventListener("click",()=>{backgroundEnabled=!backgroundEnabled;backgroundControl.textContent=backgroundEnabled?"♪ AGTERGROND KLANK AAN":"♪ AGTERGROND KLANK AF";if(!backgroundEnabled){kuduAmbience.pause();clayTrapAudio.pause();}else if(active&&!paused){if(mode==="koedoe")kuduAmbience.play().catch(()=>{});if(mode==="skeet"||mode==="trap"){clayTrapAudio.loop=true;clayTrapAudio.play().catch(()=>{});}}});/* macauw-bird-ambience-v56 */ const birdAmbience=new Audio("/assets/bird-ambience.mp3");birdAmbience.loop=true;birdAmbience.volume=.45;birdAmbience.preload="auto";const syncBirdAmbience=()=>{if(mode==="waterfowl"&&active&&!paused&&backgroundEnabled){birdAmbience.play().catch(()=>{});}else birdAmbience.pause();};ui.btnStart.addEventListener("click",()=>{birdAmbience.currentTime=0;syncBirdAmbience();});ui.pause.addEventListener("click",syncBirdAmbience);stopBtn.addEventListener("click",syncBirdAmbience);document.getElementById("backgroundSound").addEventListener("click",syncBirdAmbience);document.querySelectorAll("[data-mode]").forEach(b=>b.addEventListener("click",syncBirdAmbience));selectMode('skeet');setUi();draw();
   // Development test helpers, harmless in production.
   window.__ECLAY_TEST__={getState:()=>({active,paused,ended,mode,score,hits,shots,ammo,level,time,clayCount:clays.length,
     olympicDone,waveIndex,olympicState,stationClock,releaseDelay,currentWave:currentWave(),
