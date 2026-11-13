@@ -510,7 +510,7 @@
       const image=featherAtlases[b.species];
       if(!image||!image.complete||!image.naturalWidth||!image.naturalHeight){b.t=now;continue;}
       const frame=Math.floor((now-b.t)/90);
-      if(frame>=12){featherBursts.splice(i,1);continue;}
+      if(frame>=(b.species==='EEND'?11:12)){featherBursts.splice(i,1);continue;}
       const w=image.naturalWidth/4,h=image.naturalHeight/3;
       ctx.save();ctx.translate(b.x+((b.species==='GANS'||b.species==='EEND'||b.species==='ROTSDUIF')?(b.vx||0)*(b.species==="GANS"?1.2:1)*(1-Math.exp(-2.5*(now-b.t)/1000))/2.5:0),b.y);if((b.species==='EEND'&&b.direction<0)||(b.species==='GANS'&&b.direction>0))ctx.scale(-1,1);ctx.drawImage(image,(frame%4)*w,Math.floor(frame/4)*h,w,h,
         -b.size/2,-b.size/2,b.size,b.size);ctx.restore();
