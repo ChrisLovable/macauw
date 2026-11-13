@@ -53,3 +53,52 @@
 
 /* macauw-large-wrapped-sound-v2 */
 @media (orientation:landscape) and (max-width:1100px) and (max-height:650px){html body #arena .scoreboard{height:64px!important;max-height:64px!important;min-height:64px!important}html body #arena .scoreboard #backgroundSound,html body #arena .scoreboard #sound{font-size:15px!important;line-height:1.05!important;font-weight:900!important;white-space:normal!important;overflow-wrap:anywhere!important;word-break:normal!important;text-align:center!important;height:56px!important;max-height:56px!important;min-height:56px!important;min-width:72px!important;max-width:170px!important;flex:1 1 105px!important;padding:4px 5px!important}}
+
+/* macauw-landscape-topbar-v2: ONLY short landscape screens */
+@media screen and (orientation: landscape) and (max-height: 540px) and (max-width: 1100px) {
+  #intro { box-sizing:border-box!important; padding:3px!important; align-items:center!important; justify-content:center!important; overflow:hidden!important; }
+  #intro .welcome-card { box-sizing:border-box!important; display:flex!important; flex-direction:column!important; grid-template-columns:none!important; width:min(98vw, 970px)!important; max-width:98vw!important; height:auto!important; min-height:0!important; max-height:calc(100dvh - 6px)!important; padding:5px 10px!important; margin:0 auto!important; gap:3px!important; overflow-x:hidden!important; overflow-y:auto!important; border-radius:12px!important; }
+  /* Replace the tall left-side hero with a narrow, centered top masthead. */
+  #intro .welcome-heading { position:relative!important; display:flex!important; flex:none!important; flex-direction:row!important; justify-content:center!important; align-items:center!important; width:100%!important; min-width:0!important; min-height:0!important; max-height:35px!important; padding:0!important; margin:0!important; gap:9px!important; border:0!important; text-align:center!important; background-image:none!important; }
+  #intro .welcome-heading::before, #intro .welcome-heading::after { display:none!important; content:none!important; }
+  #intro .welcome-heading > img, #intro .welcome-heading > svg { display:none!important; }
+  #intro .welcome-heading .eyebrow { display:none!important; }
+  #intro .welcome-heading h1, #intro #heading { display:block!important; width:auto!important; flex:none!important; font-size:clamp(15px,2.6vw,23px)!important; line-height:1!important; letter-spacing:.01em!important; margin:0!important; padding:0!important; white-space:nowrap!important; text-shadow:none!important; }
+  #intro .welcome-heading h1 em, #intro #heading em { display:inline!important; font-size:inherit!important; line-height:inherit!important; margin:0!important; }
+  #intro .welcome-heading p, #intro #description, #intro .disclaimer, #intro .tips { display:none!important; }
+  #intro .welcome-settings { box-sizing:border-box!important; display:flex!important; flex:1 1 auto!important; flex-direction:column!important; width:100%!important; max-width:100%!important; min-width:0!important; min-height:0!important; margin:0!important; padding:0!important; gap:3px!important; }
+  #intro .welcome-settings > * { flex-shrink:0!important; margin-top:0!important; margin-bottom:0!important; }
+  #intro .mode-heading { font-size:9px!important; line-height:1!important; padding:0!important; margin:0!important; letter-spacing:.5px!important; text-align:center!important; }
+  #intro .mode-select { display:grid!important; grid-template-columns:repeat(3,minmax(0,1fr))!important; grid-template-rows:repeat(2,minmax(0,1fr))!important; width:100%!important; gap:3px!important; margin:0!important; padding:0!important; }
+  #intro .mode-select .mode { box-sizing:border-box!important; width:100%!important; min-width:0!important; min-height:30px!important; height:30px!important; padding:2px 4px!important; margin:0!important; border-radius:8px!important; font-size:clamp(9px,1.5vw,12px)!important; line-height:1!important; gap:3px!important; }
+  #intro .mode-select .mode img, #intro .mode-select .mode svg { max-width:21px!important; max-height:21px!important; }
+  #intro #start { box-sizing:border-box!important; min-height:34px!important; height:34px!important; padding:3px 7px!important; margin:0!important; border-radius:10px!important; font-size:clamp(17px,2.8vw,23px)!important; line-height:1!important; }
+  #intro #howto { display:block!important; width:auto!important; min-height:13px!important; height:auto!important; padding:0!important; margin:0 auto!important; font-size:10px!important; line-height:1.05!important; }
+  /* Existing language and three action buttons retain their functionality. */
+  #intro .welcome-settings button { touch-action:manipulation; }
+  #intro .welcome-settings > div:has(> div > #macauw-view-leaderboard), #intro .welcome-settings > div:has(> #macauw-view-leaderboard) { display:flex!important; flex-direction:row!important; flex-wrap:nowrap!important; align-items:stretch!important; width:100%!important; gap:4px!important; margin:0!important; }
+  #intro .welcome-settings > div:has(> div > #macauw-view-leaderboard) > *, #intro .welcome-settings > div:has(> #macauw-view-leaderboard) > * { flex:1 1 0!important; min-width:0!important; }
+  #intro .welcome-settings > div:has(> div > #macauw-view-leaderboard) button, #intro .welcome-settings > div:has(> #macauw-view-leaderboard) button { box-sizing:border-box!important; min-height:27px!important; height:auto!important; padding:3px 4px!important; font-size:clamp(9px,1.4vw,11px)!important; line-height:1!important; border-radius:7px!important; white-space:normal!important; }
+  /* Compact rating: stars, title and submit in one row; summary underneath. */
+  #intro #macauw-game-rating { box-sizing:border-box!important; display:grid!important; grid-template-columns:minmax(0,1fr) auto auto!important; grid-template-rows:auto auto!important; align-items:center!important; gap:2px 7px!important; width:100%!important; min-height:0!important; padding:4px 8px!important; margin:0!important; border-radius:9px!important; }
+  #intro #macauw-game-rating .mr-title { grid-column:1!important; grid-row:1!important; font-size:clamp(9px,1.55vw,12px)!important; line-height:1.1!important; letter-spacing:0!important; text-align:left!important; }
+  #intro #macauw-game-rating .mr-stars { grid-column:2!important; grid-row:1!important; display:flex!important; flex-wrap:nowrap!important; gap:0!important; margin:0!important; }
+  #intro #macauw-game-rating .mr-star { box-sizing:border-box!important; min-width:25px!important; width:25px!important; height:28px!important; min-height:28px!important; padding:0!important; margin:0!important; font-size:23px!important; line-height:1!important; }
+  #intro #macauw-game-rating .mr-submit { grid-column:3!important; grid-row:1!important; box-sizing:border-box!important; width:auto!important; min-height:27px!important; height:27px!important; padding:3px 6px!important; font-size:clamp(9px,1.25vw,11px)!important; line-height:1!important; border-radius:7px!important; white-space:nowrap!important; }
+  #intro #macauw-game-rating .mr-summary { grid-column:1 / -1!important; grid-row:2!important; margin:0!important; font-size:10px!important; line-height:1.05!important; }
+  #intro #macauw-game-rating .mr-status { grid-column:1 / -1!important; grid-row:3!important; min-height:0!important; margin:0!important; font-size:10px!important; line-height:1.05!important; overflow-wrap:anywhere!important; }
+  #intro #macauw-game-rating .mr-status:empty { display:none!important; }
+  #intro #macauw-about, #intro #about, #intro .about-button { box-sizing:border-box!important; min-height:23px!important; height:auto!important; padding:3px 8px!important; font-size:10px!important; line-height:1.05!important; margin:0 auto!important; }
+}
+@media screen and (orientation: landscape) and (max-height: 390px) and (max-width: 1100px) {
+  #intro .welcome-card { padding:3px 8px!important; gap:2px!important; }
+  #intro .welcome-heading { max-height:24px!important; }
+  #intro .welcome-heading h1, #intro #heading { font-size:16px!important; }
+  #intro .welcome-settings { gap:2px!important; }
+  #intro .mode-select .mode { min-height:27px!important; height:27px!important; }
+  #intro #start { min-height:30px!important; height:30px!important; }
+  #intro #macauw-game-rating { padding:2px 6px!important; }
+  #intro #macauw-game-rating .mr-star { height:24px!important; min-height:24px!important; font-size:21px!important; }
+}
+/* end macauw-landscape-topbar-v2 */
+

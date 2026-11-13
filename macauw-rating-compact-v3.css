@@ -1,0 +1,88 @@
+/* Macauw rating compact v3. Visual-only; rating logic remains untouched. */
+#intro #macauw-game-rating {
+  box-sizing:border-box!important;
+  width:100%!important;
+  margin:2px 0 0!important;
+  padding:5px 9px!important;
+  min-height:0!important;
+  display:grid!important;
+  grid-template-columns:minmax(140px,1fr) auto minmax(115px,1fr)!important;
+  align-items:center!important;
+  justify-items:center!important;
+  gap:3px 12px!important;
+  border-radius:9px!important;
+}
+/* The large bilingual title adds no value alongside the stars. */
+#intro #macauw-game-rating .mr-title {display:none!important;}
+#intro #macauw-game-rating .mr-stars {
+  display:flex!important;
+  justify-content:center!important;
+  align-items:center!important;
+  gap:2px!important;
+  margin:0!important;
+  padding:0!important;
+  min-height:0!important;
+}
+#intro #macauw-game-rating .mr-star {
+  width:29px!important;
+  min-width:29px!important;
+  height:29px!important;
+  min-height:29px!important;
+  max-height:29px!important;
+  margin:0!important;
+  padding:0!important;
+  font-size:25px!important;
+  line-height:1!important;
+}
+#intro #macauw-game-rating .mr-submit {
+  box-sizing:border-box!important;
+  min-height:30px!important;
+  height:30px!important;
+  max-height:30px!important;
+  margin:0!important;
+  padding:3px 8px!important;
+  font-size:11px!important;
+  line-height:1.05!important;
+  white-space:nowrap!important;
+}
+#intro #macauw-game-rating .mr-summary {
+  margin:0!important;
+  padding:0!important;
+  font-size:10px!important;
+  line-height:1.15!important;
+  min-height:0!important;
+}
+#intro #macauw-game-rating .mr-status:empty {display:none!important;}
+#intro #macauw-game-rating .mr-status:not(:empty) {
+  grid-column:1 / -1!important;
+  width:100%!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:1px 0!important;
+  font-size:10px!important;
+  line-height:1.15!important;
+  text-align:center!important;
+  overflow-wrap:anywhere!important;
+}
+@media (max-width:540px) {
+  #intro #macauw-game-rating {
+    grid-template-columns: minmax(130px, 1fr) auto!important;
+    gap:3px 5px!important;
+    padding:4px 5px!important;
+  }
+  #intro #macauw-game-rating .mr-star {
+    min-width:25px!important;
+    width:25px!important;
+    height:27px!important;
+    min-height:27px!important;
+    font-size:23px!important;
+  }
+  #intro #macauw-game-rating .mr-submit {font-size:9px!important;padding:3px 5px!important;}
+  #intro #macauw-game-rating .mr-summary {grid-column:1 / -1!important;font-size:9px!important;}
+}
+@media (orientation:landscape) and (max-height:550px) {
+  #intro #macauw-game-rating {padding:2px 5px!important;gap:2px 6px!important;}
+  #intro #macauw-game-rating .mr-star {height:23px!important;min-height:23px!important;max-height:23px!important;font-size:21px!important;}
+  #intro #macauw-game-rating .mr-submit {height:24px!important;max-height:24px!important;min-height:24px!important;font-size:9px!important;}
+  #intro #macauw-game-rating .mr-summary,#intro #macauw-game-rating .mr-status:not(:empty) {font-size:9px!important;}
+}
